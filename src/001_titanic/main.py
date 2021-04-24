@@ -3,12 +3,21 @@ from sklearn import tree
 import os
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder, LabelBinarizer
+
+#PassengerId,Pclass,Name,Sex,Age,SibSp,Parch,Ticket,Fare,Cabin,Embarked
 
 
 cwdir = os.getcwd()
 trainfile = cwdir + "/../../data/Titanic/train.csv"
 testfile = cwdir + "/../../data/Titanic/train.csv"
-train_data = pd.read_csv(trainfile).to_numpy()
+train_data_pd = pd.read_csv(trainfile)
+train_data = train_data_pd.to_numpy()
+
+one = OneHotEncoder(handle_unknown='ignore')
+ord = OrdinalEncoder(handle_unknown='ignore')
+cabins = one.fit_transform(train_data_pd[["Cabin"]])
+
 
 train_Y = train_data[:, 1]
 train_X = train_data[:, 2:]
@@ -16,6 +25,8 @@ train_X = train_data[:, 2:]
 # Remove name from Data
 train_X = np.delete(train_data, 3, axis=1)
 
+#enc.fit(train_X)
+#new_data = enc.transform(train_X).toarray()
 
 train_inds, val_inds = sklearn.model_selection.train_test_split(
     np.arange(len(train_Y)), test_size=0.2
