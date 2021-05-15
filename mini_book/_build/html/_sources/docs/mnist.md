@@ -1,3 +1,36 @@
+---
+jupytext:
+  text_representation:
+    extension: .md
+    format_name: myst
+kernelspec:
+  display_name: Python 3
+  language: python
+  name: python3
+---
+
+(mnist)=
+
+# MNIST Challenge
+
+## Overview
+
+## The Task
+
+```{figure} /static/mnist.png
+```
+
+```{code-cell} python3
+%matplotlib inline
+```
+
+## Version 1
+
+(ourfirstprog)=
+
+Here are a few lines of code that perform the task we set
+
+```{code-cell} ipython3
 import os
 import numpy as np
 import torch
@@ -47,7 +80,7 @@ val_dataset = utils.dataset.MNISTDataset(val_X, val_Y)
 train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda")
 cnn = utils.models.MNIST_CNN_01().to(device)
 optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 
@@ -55,3 +88,5 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 utils.boilerplates.train_classifier(
     cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True
 )
+
+```
