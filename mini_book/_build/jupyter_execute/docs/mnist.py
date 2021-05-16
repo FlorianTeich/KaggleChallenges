@@ -1,4 +1,31 @@
-%matplotlib inline
+#!/usr/bin/env python
+# coding: utf-8
+
+# (mnist)=
+# 
+# # MNIST Challenge
+# 
+# ## Overview
+# 
+# ## The Task
+# 
+# ```{figure} /static/mnist.png
+# ```
+
+# In[1]:
+
+
+get_ipython().run_line_magic('matplotlib', 'inline')
+
+
+# ## Version 1
+# 
+# (ourfirstprog)=
+# 
+# Here are a few lines of code that perform the task we set
+
+# In[2]:
+
 
 import os
 import numpy as np
@@ -50,6 +77,6 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 
 # Now train:
 utils.boilerplates.train_classifier(
-    cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True
+    cnn, optimizer, train_loader, device, 3, nn.CrossEntropyLoss(), val_loader, show_plot=True
 )
 

@@ -40,12 +40,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
 from torch.utils.data import TensorDataset, DataLoader
-
-# from .. import utils
-import sys
-
-sys.path.insert(0, "..")
-import utils
+import kcu as utils
 
 
 cwdir = os.getcwd()
@@ -86,7 +81,7 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 
 # Now train:
 utils.boilerplates.train_classifier(
-    cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True
+    cnn, optimizer, train_loader, device, 3, nn.CrossEntropyLoss(), val_loader, show_plot=True
 )
 
 ```

@@ -216,7 +216,7 @@
 </div>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="n">matplotlib</span> <span class="n">inline</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
 </pre></div>
 </div>
 </div>
@@ -227,7 +227,7 @@
 <p id="ourfirstprog">Here are a few lines of code that perform the task we set</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">sklearn.metrics</span>
@@ -236,12 +236,7 @@
 <span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">import</span> <span class="nn">torch.utils.data</span>
 <span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">DataLoader</span>
-
-<span class="c1"># from .. import utils</span>
-<span class="kn">import</span> <span class="nn">sys</span>
-
-<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;..&quot;</span><span class="p">)</span>
-<span class="kn">import</span> <span class="nn">utils</span>
+<span class="kn">import</span> <span class="nn">kcu</span> <span class="k">as</span> <span class="nn">utils</span>
 
 
 <span class="n">cwdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
@@ -282,10 +277,30 @@
 
 <span class="c1"># Now train:</span>
 <span class="n">utils</span><span class="o">.</span><span class="n">boilerplates</span><span class="o">.</span><span class="n">train_classifier</span><span class="p">(</span>
-    <span class="n">cnn</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">cnn</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 </pre></div>
 </div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>kNN Acc: 0.9671428571428572
+</pre></div>
+</div>
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Error: 
+ Accuracy: 97.5%, Avg loss: 0.010561 
+</pre></div>
+</div>
+<img alt="../_images/mnist_3_2.png" src="../_images/mnist_3_2.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Error: 
+ Accuracy: 97.8%, Avg loss: 0.008840 
+</pre></div>
+</div>
+<img alt="../_images/mnist_3_4.png" src="../_images/mnist_3_4.png" />
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Error: 
+ Accuracy: 98.4%, Avg loss: 0.007387 
+</pre></div>
+</div>
+<img alt="../_images/mnist_3_6.png" src="../_images/mnist_3_6.png" />
 </div>
 </div>
 </div>

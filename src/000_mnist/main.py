@@ -1,23 +1,15 @@
 import os
 import numpy as np
-import torch
 import sklearn.metrics
 from sklearn.neighbors import KNeighborsClassifier
 import torch.nn as nn
-import torch.nn.functional as F
 import torch.utils.data
-from torch.utils.data import TensorDataset, DataLoader
-
-# from .. import utils
-import sys
-
-sys.path.insert(0, "..")
-import utils
+from torch.utils.data import DataLoader
+import kcu as utils
 
 
 cwdir = os.getcwd()
 trainfile = cwdir + "/../../data/MNIST/train.csv"
-# train_data = np.loadtxt(trainfile, skiprows=1, delimiter=",")
 if not(os.path.exists( cwdir + "/../../data/MNIST/train.bin.npy")):
     train_data = np.loadtxt(trainfile, skiprows=1, delimiter=",").astype(np.int16)
     np.save(cwdir + "/../../data/MNIST/train.bin", train_data)
