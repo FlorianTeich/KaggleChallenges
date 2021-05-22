@@ -22,7 +22,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v2
       - name: Build docker images
-        run: docker build -t Dockerfile
+        run: docker build .
       
 #env:
 #  using: 'docker'
