@@ -6,17 +6,22 @@ import torch.nn as nn
 import torch.utils.data
 from torch.utils.data import DataLoader
 import kcu as utils
+import time
+import pandas as pd
+from tpot import TPOTClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 
 
+""" SETUP """
+dry_run = True
 cwdir = os.getcwd()
 trainfile = cwdir + "/../../data/MNIST/train.csv"
-if not(os.path.exists( cwdir + "/../../data/MNIST/train.bin.npy")):
-    train_data = np.loadtxt(trainfile, skiprows=1, delimiter=",").astype(np.int16)
-    np.save(cwdir + "/../../data/MNIST/train.bin", train_data)
-else:
-    train_data = np.load(cwdir + "/../../data/MNIST/train.bin.npy")
+df = pd.read_csv(trainfile)
 
-
+train_data = df.to_numpy()
 train_Y = train_data[:, 0]
 train_X = train_data[:, 1:]
 
@@ -27,23 +32,22 @@ train_inds, val_inds = sklearn.model_selection.train_test_split(
 train_X, val_X = train_X[train_inds], train_X[val_inds]
 train_Y, val_Y = train_Y[train_inds], train_Y[val_inds]
 
-# Lets start with k-Nearest Neighbour:
-clf = KNeighborsClassifier(5)
-clf.fit(train_X, train_Y)
-pred = clf.predict(val_X)
-print("kNN Acc:", sklearn.metrics.accuracy_score(val_Y, pred))
+if dry_run:
+    train_X, train_Y = train_X[:512], train_Y[:512]
 
-# Lets try Pytorch
+""" MAIN CLASSIFICATION PIPELINES """
+
+# Exp01: Several Classifiers including TPOT
+utils.boilerplates.run_several_classifiers(train_X, val_X, train_Y, val_Y)
+
+# Exp02: Lets try Pytorch
 train_dataset = utils.dataset.MNISTDataset(train_X, train_Y)
 val_dataset = utils.dataset.MNISTDataset(val_X, val_Y)
 train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
-
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 cnn = utils.models.MNIST_CNN_01().to(device)
 optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
-
-# Now train:
 utils.boilerplates.train_classifier(
-    cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True
+    cnn, optimizer, train_loader, device, 3, nn.CrossEntropyLoss(), val_loader, show_plot=True
 )

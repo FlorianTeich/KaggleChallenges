@@ -3,6 +3,7 @@ from sklearn import tree
 import os
 import numpy as np
 import pandas as pd
+import kcu as utils
 
 
 cwdir = os.getcwd()
@@ -20,10 +21,4 @@ train_inds, val_inds = sklearn.model_selection.train_test_split(
 train_X, val_X = X_train.iloc[train_inds], X_train.iloc[val_inds]
 train_Y, val_Y = Y_train.iloc[train_inds], Y_train.iloc[val_inds]
 
-# Approach 1: Decision Trees
-clf = tree.DecisionTreeClassifier()
-clf = clf.fit(train_X, train_Y)
-pred = clf.predict(val_X)
-
-print("Decision Tree Acc:", sklearn.metrics.accuracy_score(val_Y, pred))
-print("Finished!")
+utils.boilerplates.run_several_classifiers()

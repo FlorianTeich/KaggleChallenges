@@ -55,3 +55,24 @@ def train_classifier(
             plt.plot(np.arange(epoch + 1), test_history_loss)
             plt.savefig("results.png")
             plt.show()
+
+
+def run_several_classifiers(train_X, val_X, train_Y, val_Y):
+    for name, clf in [
+        ("kNN", KNeighborsClassifier(5)),
+        ("SVM", SVC(kernel="linear", C=0.025)),
+        ("DecisionTree", DecisionTreeClassifier(max_depth=5)),
+        ("MLP", MLPClassifier(alpha=1, max_iter=10)),
+        ("RandomForest", RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)),
+        ("AdaBoost", AdaBoostClassifier())
+    ]:
+        clf.fit(train_X, train_Y)
+        pred = clf.predict(val_X)
+        print(name + " Acc:", sklearn.metrics.accuracy_score(val_Y, pred))
+
+    # Exp02: Lets try the automatic TPOT module
+    pipeline_optimizer = TPOTClassifier(generations=5, population_size=20, cv=5,
+                                        random_state=42, verbosity=2)
+    pipeline_optimizer.fit(train_X, train_Y)
+    print("TPOT Acc:", pipeline_optimizer.score(val_X, val_Y))
+    # pipeline_optimizer.export('tpot_exported_pipeline.py')
