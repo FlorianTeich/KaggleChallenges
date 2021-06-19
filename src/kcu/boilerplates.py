@@ -1,6 +1,11 @@
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
+import sklearn
+import time
+from timeit import default_timer as timer
+from sklearn import datasets
+import seaborn as sns
 
 
 def train_classifier(
@@ -57,22 +62,39 @@ def train_classifier(
             plt.show()
 
 
-def run_several_classifiers(train_X, val_X, train_Y, val_Y):
+def determine_durations(n_features, n_samples, model, try_samples=[10, 100, 1000, 2000, 4000, 8000]):
+    X_art, y_art = datasets.make_classification(n_samples=n_samples, n_features=n_features)
+    times = []
+    samples = try_samples
+    for i in samples:
+        start = timer()
+        model.fit(X_art[:i], y_art[:i])
+        end = timer()
+        times.append(end - start)
+        print(i, end - start)
+    sns.lineplot(samples, times, marker="o")
+    plt.title("Training time for different dataset sizes")
+    plt.xlabel(samples)
+    plt.ylabel("Training time in seconds")
+    plt.show()
+
+
+def run_several_classifiers(train_X, val_X, train_Y, val_Y, samples):
     for name, clf in [
-        ("kNN", KNeighborsClassifier(5)),
-        ("SVM", SVC(kernel="linear", C=0.025)),
-        ("DecisionTree", DecisionTreeClassifier(max_depth=5)),
-        ("MLP", MLPClassifier(alpha=1, max_iter=10)),
-        ("RandomForest", RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1)),
-        ("AdaBoost", AdaBoostClassifier())
+        ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),
+        ("SVM", sklearn.svm.SVC(kernel="linear", C=0.025)),
+        ("MLP", sklearn.neural_network.MLPClassifier(alpha=1, max_iter=10)),
+        ("DecisionTree", sklearn.tree.DecisionTreeClassifier(max_depth=5)),
+        ("RandomForest", sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10)),
+        ("AdaBoost", sklearn.ensemble.AdaBoostClassifier())
     ]:
         clf.fit(train_X, train_Y)
         pred = clf.predict(val_X)
         print(name + " Acc:", sklearn.metrics.accuracy_score(val_Y, pred))
 
     # Exp02: Lets try the automatic TPOT module
-    pipeline_optimizer = TPOTClassifier(generations=5, population_size=20, cv=5,
-                                        random_state=42, verbosity=2)
-    pipeline_optimizer.fit(train_X, train_Y)
-    print("TPOT Acc:", pipeline_optimizer.score(val_X, val_Y))
+    #pipeline_optimizer = TPOTClassifier(generations=5, population_size=20, cv=5,
+    #                                    random_state=42, verbosity=2)
+    #pipeline_optimizer.fit(train_X, train_Y)
+    #print("TPOT Acc:", pipeline_optimizer.score(val_X, val_Y))
     # pipeline_optimizer.export('tpot_exported_pipeline.py')

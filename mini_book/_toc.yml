@@ -1,4 +1,7 @@
 # - file: README
 - file: docs/index
-  sections:
-    - file: docs/mnist
+  #sections:
+- file: /docs/mnist
+- file: /docs/mnist_nb
+    #- file: docs/mnist
+    #- file: docs/mnist_nb

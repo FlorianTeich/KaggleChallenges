@@ -1,0 +1,101 @@
+Traceback (most recent call last):
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/site-packages/jupyter_cache/executors/utils.py", line 56, in single_nb_execution
+    record_timing=False,
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/site-packages/nbclient/client.py", line 1112, in execute
+    return NotebookClient(nb=nb, resources=resources, km=km, **kwargs).execute()
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/site-packages/nbclient/util.py", line 74, in wrapped
+    return just_run(coro(*args, **kwargs))
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/site-packages/nbclient/util.py", line 53, in just_run
+    return loop.run_until_complete(coro)
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/asyncio/base_events.py", line 488, in run_until_complete
+    return future.result()
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/site-packages/nbclient/client.py", line 554, in async_execute
+    cell, index, execution_count=self.code_cells_executed + 1
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/site-packages/nbclient/client.py", line 857, in async_execute_cell
+    self._check_raise_for_error(cell, exec_reply)
+  File "/home/florian/anaconda3/envs/py36/lib/python3.6/site-packages/nbclient/client.py", line 760, in _check_raise_for_error
+    raise CellExecutionError.from_cell_and_msg(cell, exec_reply_content)
+nbclient.exceptions.CellExecutionError: An error occurred while executing the following cell:
+------------------
+cwdir = os.getcwd()
+trainfile = cwdir + "/../../data/MNIST/train.csv"
+if not(os.path.exists( cwdir + "/../../data/MNIST/train.bin.npy")):
+    train_data = np.loadtxt(trainfile, skiprows=1, delimiter=",").astype(np.int16)
+    np.save(cwdir + "/../../data/MNIST/train.bin", train_data)
+else:
+    train_data = np.load(cwdir + "/../../data/MNIST/train.bin.npy")
+
+
+train_Y = train_data[:, 0]
+train_X = train_data[:, 1:]
+
+# Split train set into train and validation
+train_inds, val_inds = sklearn.model_selection.train_test_split(
+    np.arange(len(train_Y)), test_size=0.2
+)
+train_X, val_X = train_X[train_inds], train_X[val_inds]
+train_Y, val_Y = train_Y[train_inds], train_Y[val_inds]
+
+# Lets start with k-Nearest Neighbour:
+clf = KNeighborsClassifier(5)
+clf.fit(train_X, train_Y)
+pred = clf.predict(val_X)
+print("kNN Acc:", sklearn.metrics.accuracy_score(val_Y, pred))
+
+# Lets try Pytorch
+train_dataset = utils.dataset.MNISTDataset(train_X, train_Y)
+val_dataset = utils.dataset.MNISTDataset(val_X, val_Y)
+train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
+val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
+
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+cnn = utils.models.MNIST_CNN_01().to(device)
+optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
+
+# Now train:
+utils.boilerplates.train_classifier(
+    cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True
+)
+
+------------------
+
+[0;31m---------------------------------------------------------------------------[0m
+[0;31mKeyboardInterrupt[0m                         Traceback (most recent call last)
+[0;32m<ipython-input-2-f62851e29612>[0m in [0;36m<module>[0;34m[0m
+[1;32m     31[0m [0;34m[0m[0m
+[1;32m     32[0m [0mdevice[0m [0;34m=[0m [0mtorch[0m[0;34m.[0m[0mdevice[0m[0;34m([0m[0;34m'cuda'[0m [0;32mif[0m [0mtorch[0m[0;34m.[0m[0mcuda[0m[0;34m.[0m[0mis_available[0m[0;34m([0m[0;34m)[0m [0;32melse[0m [0;34m'cpu'[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 33[0;31m [0mcnn[0m [0;34m=[0m [0mutils[0m[0;34m.[0m[0mmodels[0m[0;34m.[0m[0mMNIST_CNN_01[0m[0;34m([0m[0;34m)[0m[0;34m.[0m[0mto[0m[0;34m([0m[0mdevice[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m     34[0m [0moptimizer[0m [0;34m=[0m [0mtorch[0m[0;34m.[0m[0moptim[0m[0;34m.[0m[0mAdam[0m[0;34m([0m[0mcnn[0m[0;34m.[0m[0mparameters[0m[0;34m([0m[0;34m)[0m[0;34m,[0m [0mlr[0m[0;34m=[0m[0;36m0.001[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m     35[0m [0;34m[0m[0m
+
+[0;32m~/anaconda3/envs/py36/lib/python3.6/site-packages/torch/nn/modules/module.py[0m in [0;36mto[0;34m(self, *args, **kwargs)[0m
+[1;32m    671[0m             [0;32mreturn[0m [0mt[0m[0;34m.[0m[0mto[0m[0;34m([0m[0mdevice[0m[0;34m,[0m [0mdtype[0m [0;32mif[0m [0mt[0m[0;34m.[0m[0mis_floating_point[0m[0;34m([0m[0;34m)[0m [0;32mor[0m [0mt[0m[0;34m.[0m[0mis_complex[0m[0;34m([0m[0;34m)[0m [0;32melse[0m [0;32mNone[0m[0;34m,[0m [0mnon_blocking[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    672[0m [0;34m[0m[0m
+[0;32m--> 673[0;31m         [0;32mreturn[0m [0mself[0m[0;34m.[0m[0m_apply[0m[0;34m([0m[0mconvert[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    674[0m [0;34m[0m[0m
+[1;32m    675[0m     def register_backward_hook(
+
+[0;32m~/anaconda3/envs/py36/lib/python3.6/site-packages/torch/nn/modules/module.py[0m in [0;36m_apply[0;34m(self, fn)[0m
+[1;32m    385[0m     [0;32mdef[0m [0m_apply[0m[0;34m([0m[0mself[0m[0;34m,[0m [0mfn[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    386[0m         [0;32mfor[0m [0mmodule[0m [0;32min[0m [0mself[0m[0;34m.[0m[0mchildren[0m[0;34m([0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 387[0;31m             [0mmodule[0m[0;34m.[0m[0m_apply[0m[0;34m([0m[0mfn[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    388[0m [0;34m[0m[0m
+[1;32m    389[0m         [0;32mdef[0m [0mcompute_should_use_set_data[0m[0;34m([0m[0mtensor[0m[0;34m,[0m [0mtensor_applied[0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/anaconda3/envs/py36/lib/python3.6/site-packages/torch/nn/modules/module.py[0m in [0;36m_apply[0;34m(self, fn)[0m
+[1;32m    407[0m                 [0;31m# `with torch.no_grad():`[0m[0;34m[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    408[0m                 [0;32mwith[0m [0mtorch[0m[0;34m.[0m[0mno_grad[0m[0;34m([0m[0;34m)[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+[0;32m--> 409[0;31m                     [0mparam_applied[0m [0;34m=[0m [0mfn[0m[0;34m([0m[0mparam[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    410[0m                 [0mshould_use_set_data[0m [0;34m=[0m [0mcompute_should_use_set_data[0m[0;34m([0m[0mparam[0m[0;34m,[0m [0mparam_applied[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[1;32m    411[0m                 [0;32mif[0m [0mshould_use_set_data[0m[0;34m:[0m[0;34m[0m[0;34m[0m[0m
+
+[0;32m~/anaconda3/envs/py36/lib/python3.6/site-packages/torch/nn/modules/module.py[0m in [0;36mconvert[0;34m(t)[0m
+[1;32m    669[0m                 return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None,
+[1;32m    670[0m                             non_blocking, memory_format=convert_to_format)
+[0;32m--> 671[0;31m             [0;32mreturn[0m [0mt[0m[0;34m.[0m[0mto[0m[0;34m([0m[0mdevice[0m[0;34m,[0m [0mdtype[0m [0;32mif[0m [0mt[0m[0;34m.[0m[0mis_floating_point[0m[0;34m([0m[0;34m)[0m [0;32mor[0m [0mt[0m[0;34m.[0m[0mis_complex[0m[0;34m([0m[0;34m)[0m [0;32melse[0m [0;32mNone[0m[0;34m,[0m [0mnon_blocking[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0m[1;32m    672[0m [0;34m[0m[0m
+[1;32m    673[0m         [0;32mreturn[0m [0mself[0m[0;34m.[0m[0m_apply[0m[0;34m([0m[0mconvert[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+
+[0;31mKeyboardInterrupt[0m: 
+KeyboardInterrupt: 
+

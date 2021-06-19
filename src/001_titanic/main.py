@@ -15,6 +15,10 @@ features = ['Pclass', 'Sex', 'SibSp', 'Parch']
 X_train = pd.get_dummies(train_data_pd[features])
 Y_train = train_data_pd['Survived']
 
+utils.utils.correlation_matrix(pd.DataFrame(X_train))
+
+utils.boilerplates.determine_durations(len(X_train.columns), 10000, sklearn.svm.SVC())
+
 train_inds, val_inds = sklearn.model_selection.train_test_split(
     np.arange(len(Y_train)), test_size=0.2
 )

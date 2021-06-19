@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>MNIST Challenge &#8212; KaggleChallenge</title>
+    <title>&lt;no title&gt; &#8212; KaggleChallenge</title>
     
   <link href="../_static/css/theme.css" rel="stylesheet" />
   <link href="../_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -51,8 +51,7 @@
     <script async="async" src="../_static/sphinx-thebe.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="&lt;no title&gt;" href="mnist_nb.html" />
-    <link rel="prev" title="KaggleChallenges" href="index.html" />
+    <link rel="prev" title="MNIST Challenge" href="mnist.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -82,9 +81,9 @@
   <input type="search" class="form-control" name="q" id="search-input" placeholder="Search this book..." aria-label="Search this book..." autocomplete="off" >
 </form><nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
     <div class="bd-toc-item active">
-        <ul class="current nav bd-sidenav">
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+        <ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="mnist.html">
    MNIST Challenge
   </a>
  </li>
@@ -127,14 +126,11 @@
 
     <div class="dropdown-buttons">
         <!-- ipynb file if we had a myst markdown file -->
-        <a class="dropdown-buttons"
-            href="../_sources/docs/mnist.ipynb"><button type="button"
-                class="btn btn-secondary topbarbtn" title="Download notebook file" data-toggle="tooltip"
-                data-placement="left">.ipynb</button></a>
+        
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/docs/mnist.md"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/docs/mnist_nb.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
-                data-placement="left">.md</button></a>
+                data-placement="left">.ipynb</button></a>
         <!-- Download PDF via print -->
         <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
             onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
@@ -157,7 +153,7 @@
         aria-label="Launch interactive content"><i class="fas fa-rocket"></i></button>
     <div class="dropdown-buttons">
         
-        <a class="binder-button" href="https://mybinder.org/v2/gh/FlorianTeich/KaggleChallenges/master?urlpath=tree/mini_book/docs/mnist.md"><button type="button"
+        <a class="binder-button" href="https://mybinder.org/v2/gh/FlorianTeich/KaggleChallenges/master?urlpath=tree/mini_book/docs/mnist_nb.ipynb"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Launch Binder" data-toggle="tooltip"
                 data-placement="left"><img class="binder-button-logo"
                     src="../_static/images/logo_binder.svg"
@@ -178,17 +174,7 @@
                 <i class="fas fa-list"></i> Contents
             </div>
             <nav id="bd-toc-nav">
-                <ul class="visible nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#overview">
-   Overview
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#knn">
-   kNN
-  </a>
- </li>
+                <ul class="simple visible nav section-nav flex-column">
 </ul>
 
             </nav>
@@ -200,38 +186,25 @@
         
               <div>
                 
-  <div class="section" id="mnist-challenge">
-<span id="mnist"></span><h1>MNIST Challenge<a class="headerlink" href="#mnist-challenge" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="overview">
-<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
-<p>The MNIST Challenge is quite popular as it is relatively small in size, high accuracy is easily reachable for newcomers and its (debatably) a Computer Vision dataset.
-We have a train split of handwritten digits, as grayscale images that are all cropped to 28x28 pixels, fully annotated with their correct object class: 0-9.
-Based on the training data, a model has to be created that correctly predicts the class of novel samples.
-As mentioned its debated whether this dataset is indeed Computer Vision as approaches that do not make use of 2d image features will still provide high classification accuracies.
-My first approach is a k-Nearest Neighbour classifier as these are easy to debug, i.e. its very easy to understand on what basis a classification decision was made.
-This stands in stark contrast to the CNN approach, which is still considered a blackbox method.
-More and more works emerge trying to add (human-understandable) explainablilty to CNNs but these are omitted here.</p>
-<div class="figure align-default">
-<img alt="../_images/mnist.png" src="../_images/mnist.png" />
-</div>
-<div class="cell docutils container">
+  <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="o">%</span><span class="k">matplotlib</span> inline
-<span class="kn">import</span> <span class="nn">os</span>
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">torch</span>
 <span class="kn">import</span> <span class="nn">sklearn.metrics</span>
 <span class="kn">from</span> <span class="nn">sklearn.neighbors</span> <span class="kn">import</span> <span class="n">KNeighborsClassifier</span>
 <span class="kn">import</span> <span class="nn">torch.nn</span> <span class="k">as</span> <span class="nn">nn</span>
-<span class="kn">import</span> <span class="nn">torch.nn.functional</span> <span class="k">as</span> <span class="nn">F</span>
 <span class="kn">import</span> <span class="nn">torch.utils.data</span>
-<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">TensorDataset</span><span class="p">,</span> <span class="n">DataLoader</span>
+<span class="kn">from</span> <span class="nn">torch.utils.data</span> <span class="kn">import</span> <span class="n">DataLoader</span>
 <span class="kn">import</span> <span class="nn">kcu</span> <span class="k">as</span> <span class="nn">utils</span>
-
-
-<span class="n">cwdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Some Text here</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython2 notranslate"><div class="highlight"><pre><span></span><span class="n">cwdir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">()</span>
 <span class="n">trainfile</span> <span class="o">=</span> <span class="n">cwdir</span> <span class="o">+</span> <span class="s2">&quot;/../../data/MNIST/train.csv&quot;</span>
-<span class="c1"># train_data = np.loadtxt(trainfile, skiprows=1, delimiter=&quot;,&quot;)</span>
 <span class="k">if</span> <span class="ow">not</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span> <span class="n">cwdir</span> <span class="o">+</span> <span class="s2">&quot;/../../data/MNIST/train.bin.npy&quot;</span><span class="p">)):</span>
     <span class="n">train_data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">loadtxt</span><span class="p">(</span><span class="n">trainfile</span><span class="p">,</span> <span class="n">skiprows</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
     <span class="n">np</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">cwdir</span> <span class="o">+</span> <span class="s2">&quot;/../../data/MNIST/train.bin&quot;</span><span class="p">,</span> <span class="n">train_data</span><span class="p">)</span>
@@ -248,17 +221,8 @@ More and more works emerge trying to add (human-understandable) explainablilty t
 <span class="p">)</span>
 <span class="n">train_X</span><span class="p">,</span> <span class="n">val_X</span> <span class="o">=</span> <span class="n">train_X</span><span class="p">[</span><span class="n">train_inds</span><span class="p">],</span> <span class="n">train_X</span><span class="p">[</span><span class="n">val_inds</span><span class="p">]</span>
 <span class="n">train_Y</span><span class="p">,</span> <span class="n">val_Y</span> <span class="o">=</span> <span class="n">train_Y</span><span class="p">[</span><span class="n">train_inds</span><span class="p">],</span> <span class="n">train_Y</span><span class="p">[</span><span class="n">val_inds</span><span class="p">]</span>
-</pre></div>
-</div>
-</div>
-</div>
-</div>
-<div class="section" id="knn">
-<h2>kNN<a class="headerlink" href="#knn" title="Permalink to this headline">¶</a></h2>
-<p id="ourfirstprog">Here are a few lines of code that perform the task we set</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Lets start with k-Nearest Neighbour:</span>
+
+<span class="c1"># Lets start with k-Nearest Neighbour:</span>
 <span class="n">clf</span> <span class="o">=</span> <span class="n">KNeighborsClassifier</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
 <span class="n">clf</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">train_X</span><span class="p">,</span> <span class="n">train_Y</span><span class="p">)</span>
 <span class="n">pred</span> <span class="o">=</span> <span class="n">clf</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">val_X</span><span class="p">)</span>
@@ -270,37 +234,15 @@ More and more works emerge trying to add (human-understandable) explainablilty t
 <span class="n">train_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">train_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">128</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="n">val_loader</span> <span class="o">=</span> <span class="n">DataLoader</span><span class="p">(</span><span class="n">val_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">shuffle</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
-<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s2">&quot;cuda&quot;</span><span class="p">)</span>
+<span class="n">device</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">device</span><span class="p">(</span><span class="s1">&#39;cuda&#39;</span> <span class="k">if</span> <span class="n">torch</span><span class="o">.</span><span class="n">cuda</span><span class="o">.</span><span class="n">is_available</span><span class="p">()</span> <span class="k">else</span> <span class="s1">&#39;cpu&#39;</span><span class="p">)</span>
 <span class="n">cnn</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">MNIST_CNN_01</span><span class="p">()</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">device</span><span class="p">)</span>
 <span class="n">optimizer</span> <span class="o">=</span> <span class="n">torch</span><span class="o">.</span><span class="n">optim</span><span class="o">.</span><span class="n">Adam</span><span class="p">(</span><span class="n">cnn</span><span class="o">.</span><span class="n">parameters</span><span class="p">(),</span> <span class="n">lr</span><span class="o">=</span><span class="mf">0.001</span><span class="p">)</span>
 
 <span class="c1"># Now train:</span>
 <span class="n">utils</span><span class="o">.</span><span class="n">boilerplates</span><span class="o">.</span><span class="n">train_classifier</span><span class="p">(</span>
-    <span class="n">cnn</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span>
+    <span class="n">cnn</span><span class="p">,</span> <span class="n">optimizer</span><span class="p">,</span> <span class="n">train_loader</span><span class="p">,</span> <span class="n">device</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="n">nn</span><span class="o">.</span><span class="n">CrossEntropyLoss</span><span class="p">(),</span> <span class="n">val_loader</span><span class="p">,</span> <span class="n">show_plot</span><span class="o">=</span><span class="kc">True</span>
 <span class="p">)</span>
 </pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>kNN Acc: 0.9660714285714286
-</pre></div>
-</div>
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Error: 
- Accuracy: 97.2%, Avg loss: 0.012299 
-</pre></div>
-</div>
-<img alt="../_images/mnist_3_2.png" src="../_images/mnist_3_2.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Error: 
- Accuracy: 97.6%, Avg loss: 0.009987 
-</pre></div>
-</div>
-<img alt="../_images/mnist_3_4.png" src="../_images/mnist_3_4.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Test Error: 
- Accuracy: 98.2%, Avg loss: 0.008223 
-</pre></div>
-</div>
-<img alt="../_images/mnist_3_6.png" src="../_images/mnist_3_6.png" />
-</div>
 </div>
 </div>
 </div>
@@ -330,8 +272,7 @@ More and more works emerge trying to add (human-understandable) explainablilty t
         
         <div class='prev-next-bottom'>
             
-    <a class='left-prev' id="prev-link" href="index.html" title="previous page">KaggleChallenges</a>
-    <a class='right-next' id="next-link" href="mnist_nb.html" title="next page">&lt;no title&gt;</a>
+    <a class='left-prev' id="prev-link" href="mnist.html" title="previous page">MNIST Challenge</a>
 
         </div>
         
