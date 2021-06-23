@@ -1,4 +1,17 @@
+import os
+import numpy as np
 import torch
+import torch.utils.data
+from PIL import Image
+
+
+class DatasetObject():
+    urls = [""]
+    tags = [""]
+
+
+class PennDataset():
+    urls = ["https://www.cis.upenn.edu/~jshi/ped_html/PennFudanPed.zip"]
 
 
 class MNISTDataset(torch.utils.data.Dataset):

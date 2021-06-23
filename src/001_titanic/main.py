@@ -15,6 +15,8 @@ features = ['Pclass', 'Sex', 'SibSp', 'Parch']
 X_train = pd.get_dummies(train_data_pd[features])
 Y_train = train_data_pd['Survived']
 
+multi_corr = utils.utils.multiple_correlation(train_data_pd[['Pclass', 'SibSp', 'Parch', "Survived"]], "Survived")
+
 utils.utils.correlation_matrix(pd.DataFrame(X_train))
 
 utils.boilerplates.determine_durations(len(X_train.columns), 10000, sklearn.svm.SVC())

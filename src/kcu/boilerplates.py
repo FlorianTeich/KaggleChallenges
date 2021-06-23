@@ -6,6 +6,20 @@ import time
 from timeit import default_timer as timer
 from sklearn import datasets
 import seaborn as sns
+from matplotlib import pyplot as plt
+from sklearn.model_selection import cross_val_score
+import seaborn as sns
+from sklearn import tree, ensemble
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.svm import SVC
+try:
+    import cuml
+except:
+    pass
+from sklearn.metrics import plot_confusion_matrix
+from sklearn.ensemble import GradientBoostingClassifier
+from xgboost import XGBClassifier
 
 
 def train_classifier(
@@ -79,7 +93,22 @@ def determine_durations(n_features, n_samples, model, try_samples=[10, 100, 1000
     plt.show()
 
 
-def run_several_classifiers(train_X, val_X, train_Y, val_Y, samples):
+def run_several_classifiers(train_X, val_X, train_Y, val_Y, samples, use_gpu_methods=False):
+    methods = [
+        ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),
+        ("SVM", sklearn.svm.SVC(kernel="linear", C=0.025)),
+        ("MLP", sklearn.neural_network.MLPClassifier(alpha=1, max_iter=10)),
+        ("DecisionTree", sklearn.tree.DecisionTreeClassifier(max_depth=5)),
+        ("RandomForest", sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10)),
+        ("AdaBoost", sklearn.ensemble.AdaBoostClassifier())
+    ]
+
+    if use_gpu_methods:
+        methods = [
+            (cuml.neighbors.KNeighborsClassifier(n_neighbors=10), "kNN"),
+            (cuml.ensemble.RandomForestClassifier(), "Random Forest"),
+            (XGBClassifier(tree_method="gpu_hist", verbosity=0), "XGBoost")]
+
     for name, clf in [
         ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),
         ("SVM", sklearn.svm.SVC(kernel="linear", C=0.025)),

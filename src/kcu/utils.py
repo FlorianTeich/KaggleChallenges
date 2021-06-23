@@ -2,6 +2,11 @@ import matplotlib.pyplot as plt
 import pandas as pd
 import numpy as np
 import seaborn as sns
+import math
+
+
+def check_for_validity(dataset):
+    return
 
 
 def correlation_matrix(X):
@@ -42,3 +47,21 @@ def correlation_for_y(X, y, feats_per_line=25):
         ax.set_axis_off()
         #plt.savefig("correlations_" + str(i) + ".svg")
         plt.show()
+
+
+def multiple_correlation(data, z):
+    # https://stackoverflow.com/questions/55369159/how-to-perform-three-variable-correlation-with-python-pandas
+    cor = data.corr()
+    new_corr = np.zeros_like(cor.to_numpy())
+    # Independent variables
+    for num1, x in enumerate(data.columns):
+        for num2, y in enumerate(data.columns[:num1]):
+            if x != y:
+                xz = cor.loc[x, z]
+                yz = cor.loc[y, z]
+                xy = cor.loc[x, y]
+                Rxyz = math.sqrt((abs(xz ** 2) + abs(yz ** 2) - 2 * xz * yz * xy) / (1 - abs(xy ** 2)))
+                R2 = Rxyz ** 2
+                new_corr[num1, num2] = R2
+    # TODO: Vectorize it!
+    return new_corr
