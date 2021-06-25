@@ -3,10 +3,17 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import math
+import colorama
+from ipywidgets import widgets
+from pandas_profiling import ProfileReport
+from pandas_profiling.utils.cache import cache_file
 
 
-def check_for_validity(dataset):
-    return
+def report_dataframe(dataset):
+    profile = ProfileReport(
+        dataset, title="Dataset", html={"style": {"full_width": True}}, sort=None
+    )
+    return profile
 
 
 def correlation_matrix(X):

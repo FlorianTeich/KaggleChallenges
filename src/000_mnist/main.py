@@ -17,6 +17,8 @@ from matplotlib import pyplot as plt
 from sklearn import decomposition
 from sklearn.manifold import TSNE
 import seaborn as sns
+from kcu import capsules
+import torch.optim as optim
 
 
 """ SETUP """
@@ -97,7 +99,7 @@ plt.show()
 
 """ MAIN CLASSIFICATION PIPELINES """
 
-# Exp01: Several Classifiers using kFold CrossValidation
+# Try several classifiers using kFold CrossValidation
 performances = utils.boilerplates.run_several_classifiers(train_X, train_Y, cv=True)
 
 # Lets report their performances
@@ -116,6 +118,8 @@ for samples in possible_samples:
     all_perfs = all_perfs.append(performances)
 
 chart = sns.lineplot(x="num_samples", y="accuracy", hue="method", data=all_perfs)
+#chart.set_xticklabels(possible_samples)
+chart.set_xticks(possible_samples)
 chart.set_xticklabels(possible_samples)
 plt.title("Effect of train set on accuracy of various methods")
 plt.tight_layout()
@@ -136,7 +140,7 @@ sklearn.metrics.plot_confusion_matrix(clf,
 plt.title("MLP confusion matrix on validation data")
 plt.show()
 
-# Exp02: Lets leverage the local spatial relations of the input data and use a 2D CNN
+# Lets leverage the local spatial relations of the input data and use a 2D CNN
 train_dataset = utils.dataset.MNISTDataset(train_X, train_Y)
 val_dataset = utils.dataset.MNISTDataset(val_X, val_Y)
 train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
@@ -147,3 +151,43 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 utils.boilerplates.train_classifier(
     cnn, optimizer, train_loader, device, 3, nn.CrossEntropyLoss(), val_loader, show_plot=True
 )
+
+# We could do some hyperparameter tuning now by doing GridSearch, however I rather want to check out
+# one particular Neural Network that I worked with during my PhD: Capsule Networks
+capsule_net = capsules.CapsuleNetwork().to(device)
+criterion = capsules.CapsuleLoss()
+optimizer = optim.Adam(capsule_net.parameters())
+
+def train(capsule_net, criterion, optimizer, n_epochs=10, print_every=30):
+    losses = []
+    for epoch in range(1, n_epochs):
+        train_loss = 0.0
+        capsule_net.train()
+        for batch_i, (images, target) in tqdm(enumerate(train_loader)):
+            target = torch.eye(10).index_select(dim=0, index=target)
+            images, target = images.to(device), target.to(device)
+            optimizer.zero_grad()
+            caps_output, reconstructions, y = capsule_net(images)
+            loss = criterion(caps_output, target, images, reconstructions)
+            loss.backward()
+            optimizer.step()
+            train_loss += loss.item()
+            if batch_i != 0 and batch_i % print_every == 0:
+                avg_train_loss = train_loss/print_every
+                losses.append(avg_train_loss)
+                print('Epoch: {} \tTraining Loss: {:.8f}'.format(epoch, avg_train_loss))
+                train_loss = 0
+    return losses
+
+losses = train(capsule_net, criterion, optimizer, n_epochs=10)
+out = []
+gt = []
+capsule_net.eval()
+for image, target in tqdm(val_loader):
+    image = image.to(device)
+    caps_out, reconstructed, y = capsule_net(image)
+    _, pred = torch.max(y.data.cpu(), 1)
+    out.extend(pred.numpy().tolist())
+    gt.extend(target.numpy().tolist())
+
+print("Capsule Network Accuracy:", sklearn.metrics.accuracy_score(gt, out))

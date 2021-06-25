@@ -44,10 +44,6 @@ def train_classifier(
             optimizer.step()
             train_loss += loss.item()
 
-            # if batch % 10 == 0:
-            #    loss, current = loss.item(), batch * len(X)
-            #    print(f"loss: {loss:>7f}  [{current:>5d}/{len(train_loader.dataset):>5d}]")
-
         train_loss = train_loss / len(train_loader.dataset)
         train_history_loss.append(train_loss)
 

@@ -11,6 +11,20 @@ trainfile = cwdir + "/../../data/Titanic/train.csv"
 testfile = cwdir + "/../../data/Titanic/test.csv"
 train_data_pd = pd.read_csv(trainfile)
 
+# Plot some samples:
+print(train_data_pd.head())
+
+# lets get some statistics
+train_data_pd.describe()
+
+profile = utils.utils.report_dataframe(train_data_pd)
+
+profile.to_widgets()
+
+profile
+
+print()
+
 features = ['Pclass', 'Sex', 'SibSp', 'Parch']
 X_train = pd.get_dummies(train_data_pd[features])
 Y_train = train_data_pd['Survived']
