@@ -9,7 +9,8 @@ import seaborn as sns
 from matplotlib import pyplot as plt
 from sklearn.model_selection import cross_val_score
 import seaborn as sns
-from sklearn import tree, ensemble
+from sklearn import tree, ensemble, neural_network
+from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import AdaBoostClassifier
 from sklearn.svm import SVC
@@ -21,6 +22,7 @@ except:
 from sklearn.metrics import plot_confusion_matrix
 from sklearn.ensemble import GradientBoostingClassifier
 from xgboost import XGBClassifier
+from sklearn.pipeline import Pipeline
 
 
 def train_classifier(
@@ -65,12 +67,12 @@ def train_classifier(
             f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n"
         )
         
-        if show_plot:
-            plt.plot(np.arange(epoch + 1), test_history_acc)
-            plt.plot(np.arange(epoch + 1), train_history_loss)
-            plt.plot(np.arange(epoch + 1), test_history_loss)
-            plt.savefig("results.png")
-            plt.show()
+    if show_plot:
+        plt.plot(np.arange(epoch + 1), test_history_acc)
+        plt.plot(np.arange(epoch + 1), train_history_loss)
+        plt.plot(np.arange(epoch + 1), test_history_loss)
+        plt.legend(["test_acc", "train_loss", "test_loss"])
+        plt.show()
 
 
 def determine_durations(n_features, n_samples, model, try_samples=[10, 100, 1000, 2000, 4000, 8000]):
@@ -90,12 +92,13 @@ def determine_durations(n_features, n_samples, model, try_samples=[10, 100, 1000
     plt.show()
 
 
-def run_several_classifiers(train_X, train_Y, val_X=None, val_Y=None, use_gpu_methods=False, cv=True, scoring="accuracy"):
-    performances = pd.DataFrame(columns=["method", "balanced_accuracy"])
+def run_several_classifiers(train_X, train_Y, val_X=None, val_Y=None, use_gpu_methods=False, cv=True,
+                            scoring="accuracy"):
+    performances = pd.DataFrame(columns=["method", scoring])
     methods = [
         ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),
         ("SVM", sklearn.svm.SVC(kernel="linear", C=0.025)),
-        ("MLP", sklearn.neural_network.MLPClassifier(alpha=1, max_iter=10)),
+        ("MLP", MLPClassifier(alpha=1, max_iter=10)),
         ("DecisionTree", sklearn.tree.DecisionTreeClassifier(max_depth=5)),
         ("RandomForest", sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10)),
         ("AdaBoost", sklearn.ensemble.AdaBoostClassifier())
@@ -110,16 +113,19 @@ def run_several_classifiers(train_X, train_Y, val_X=None, val_Y=None, use_gpu_me
     scorer = sklearn.metrics.get_scorer(scoring)
     for name, clf in methods:
         if not(cv):
-            clf.fit(train_X, train_Y)
-            pred = clf.predict(val_X)
+            pipeline = Pipeline([('transformer', scaler), ('estimator', clf)])
+            pipeline.fit(train_X, train_Y)
+            pred = pipeline.predict(val_X)
             score = scorer(val_Y, pred)
             print(name + " score:", score)
             performances = performances.append({"method": name,
                                                 scoring: score}, ignore_index=True)
         else:
-            scores = cross_val_score(clf, train_X,
-                                 train_Y, cv=5,
-                                 scoring=scoring, n_jobs=1)
+            scaler = sklearn.preprocessing.StandardScaler()
+            pipeline = Pipeline([('transformer', scaler), ('estimator', clf)])
+            scores = cross_val_score(pipeline, train_X,
+                                     train_Y, cv=5,
+                                     scoring=scoring, n_jobs=1)
             print(name + " scores: ", scores)
             for score in scores:
                 performances = performances.append({"method": name,

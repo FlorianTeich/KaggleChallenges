@@ -1,32 +1,13 @@
 # KaggleChallenges
+![](https://img.shields.io/github/repo-size/FlorianTeich/KaggleChallenges)
 
-Repo to monitor, document and archive approaches to several Kaggle challenges.
+Amalgamation of various exploration techniques and ML methods found in other peoples notebooks with a pinch of my own take on several selected Kaggle challenges.
+
+## Current Kaggle Challenges:
+
+- [x] [MNIST](https://www.kaggle.com/c/digit-recognizer) ![](https://img.shields.io/badge/-CV-blue)
+- [x] [Titanic](https://www.kaggle.com/c/titanic) ![](https://img.shields.io/badge/-tabular-blue)
+- [ ] [S&P500](https://www.kaggle.com/camnugent/sandp500) ![](https://img.shields.io/badge/-timeseries-blue)
 
 ## Environment
-(maybe create Docker file at some point?)
-
-OS: Ubuntu 20.04
-
-- Python 3.6
-  - Calculations:
-    - numpy
-  - Machine Learning:
-    - scikit-learn
-  - Computer Vision:
-    - opencv
-    - scikit-image
-  - Visualisation:    
-    - matplotlib
-    - seaborn
-  - Deep Learning:
-    - PyTorch
-  - Code formatting:
-    - black
-  - Code/API Documentation:
-    - sphinx
-
-## Kaggle Challenges:
-
-- [ ] [MNIST](src/000_mnist/README.md) (https://www.kaggle.com/c/digit-recognizer)
-- [ ] Titanic ()
-- [ ] House Pricing ()
+See the Dockerfile
