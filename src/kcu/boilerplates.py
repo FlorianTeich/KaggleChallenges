@@ -64,7 +64,7 @@ def train_classifier(
         test_history_acc.append(correct)
 
         print(
-            f"Test Error: \n Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f} \n"
+            f"Epoch: {epoch} \t Test Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f}"
         )
         
     if show_plot:
@@ -92,6 +92,32 @@ def determine_durations(n_features, n_samples, model, try_samples=[10, 100, 1000
     plt.show()
 
 
+def time_classifiers(train_X, train_Y, samples=[1000, 2000, 4000, 8000]):
+    performances = pd.DataFrame(columns=["method", "time", "samples"])
+    methods = [
+        ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),
+        ("SVM", sklearn.svm.SVC(kernel="linear", C=0.025)),
+        ("MLP", MLPClassifier(alpha=1, max_iter=10)),
+        ("DecisionTree", sklearn.tree.DecisionTreeClassifier(max_depth=5)),
+        ("RandomForest", sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10)),
+        ("AdaBoost", sklearn.ensemble.AdaBoostClassifier())
+    ]
+
+    for name, clf in methods:
+        for sample in samples:
+            scaler = sklearn.preprocessing.StandardScaler()
+            pipeline = Pipeline([('transformer', scaler), ('estimator', clf)])
+            start_time = time.time()
+            pipeline.fit(train_X[:sample], train_Y[:sample])
+            elapsed_time = time.time() - start_time
+            performances = performances.append({"method": name,
+                                                "time": elapsed_time,
+                                                "samples": sample
+                                                }, ignore_index=True)
+
+    return performances
+
+
 def run_several_classifiers(train_X, train_Y, val_X=None, val_Y=None, use_gpu_methods=False, cv=True,
                             scoring="accuracy"):
     performances = pd.DataFrame(columns=["method", scoring])
@@ -113,6 +139,7 @@ def run_several_classifiers(train_X, train_Y, val_X=None, val_Y=None, use_gpu_me
     scorer = sklearn.metrics.get_scorer(scoring)
     for name, clf in methods:
         if not(cv):
+            scaler = sklearn.preprocessing.StandardScaler()
             pipeline = Pipeline([('transformer', scaler), ('estimator', clf)])
             pipeline.fit(train_X, train_Y)
             pred = pipeline.predict(val_X)
