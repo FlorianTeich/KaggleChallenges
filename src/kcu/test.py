@@ -1,6 +1,7 @@
-import unittest
-from kcu import visualization
 import os
+import unittest
+
+from kcu import visualization
 
 
 class TestVisualization(unittest.TestCase):

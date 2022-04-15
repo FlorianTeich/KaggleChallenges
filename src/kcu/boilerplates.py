@@ -1,34 +1,34 @@
-import torch
-import matplotlib.pyplot as plt
-import numpy as np
-import sklearn
 import time
 from timeit import default_timer as timer
-from sklearn import datasets
-import seaborn as sns
-from matplotlib import pyplot as plt
-from sklearn.model_selection import cross_val_score
-import seaborn as sns
-from sklearn import tree, ensemble, neural_network
-from sklearn.neural_network import MLPClassifier
-from sklearn.neighbors import KNeighborsClassifier
-from sklearn.ensemble import AdaBoostClassifier
-from sklearn.svm import SVC
+
+import matplotlib.pyplot as plt
+import numpy as np
 import pandas as pd
+import seaborn as sns
+import sklearn
+import torch
+from matplotlib import pyplot as plt
+from sklearn import datasets, ensemble, neural_network, tree
+from sklearn.ensemble import AdaBoostClassifier
+from sklearn.model_selection import cross_val_score
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import SVC
+
 try:
     import cuml
 except:
     pass
-from sklearn.metrics import plot_confusion_matrix
 from sklearn.ensemble import GradientBoostingClassifier
-from xgboost import XGBClassifier
+from sklearn.metrics import plot_confusion_matrix
 from sklearn.pipeline import Pipeline
+from xgboost import XGBClassifier
 
 
 def train_classifier(
     model, optimizer, train_loader, device, epochs, loss_fct, val_loader, show_plot
 ):
-    """ TRAINING """
+    """TRAINING"""
     test_history_acc = []
     train_history_loss = []
     test_history_loss = []
@@ -66,7 +66,7 @@ def train_classifier(
         print(
             f"Epoch: {epoch} \t Test Accuracy: {(100*correct):>0.1f}%, Avg loss: {test_loss:>8f}"
         )
-        
+
     if show_plot:
         plt.plot(np.arange(epoch + 1), test_history_acc)
         plt.plot(np.arange(epoch + 1), train_history_loss)
@@ -75,8 +75,12 @@ def train_classifier(
         plt.show()
 
 
-def determine_durations(n_features, n_samples, model, try_samples=[10, 100, 1000, 2000, 4000, 8000]):
-    X_art, y_art = datasets.make_classification(n_samples=n_samples, n_features=n_features)
+def determine_durations(
+    n_features, n_samples, model, try_samples=[10, 100, 1000, 2000, 4000, 8000]
+):
+    X_art, y_art = datasets.make_classification(
+        n_samples=n_samples, n_features=n_features
+    )
     times = []
     samples = try_samples
     for i in samples:
@@ -99,62 +103,78 @@ def time_classifiers(train_X, train_Y, samples=[1000, 2000, 4000, 8000]):
         ("SVM", sklearn.svm.SVC(kernel="linear", C=0.025)),
         ("MLP", MLPClassifier(alpha=1, max_iter=10)),
         ("DecisionTree", sklearn.tree.DecisionTreeClassifier(max_depth=5)),
-        ("RandomForest", sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10)),
-        ("AdaBoost", sklearn.ensemble.AdaBoostClassifier())
+        (
+            "RandomForest",
+            sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10),
+        ),
+        ("AdaBoost", sklearn.ensemble.AdaBoostClassifier()),
     ]
 
     for name, clf in methods:
         for sample in samples:
             scaler = sklearn.preprocessing.StandardScaler()
-            pipeline = Pipeline([('transformer', scaler), ('estimator', clf)])
+            pipeline = Pipeline([("transformer", scaler), ("estimator", clf)])
             start_time = time.time()
             pipeline.fit(train_X[:sample], train_Y[:sample])
             elapsed_time = time.time() - start_time
-            performances = performances.append({"method": name,
-                                                "time": elapsed_time,
-                                                "samples": sample
-                                                }, ignore_index=True)
+            performances = performances.append(
+                {"method": name, "time": elapsed_time, "samples": sample},
+                ignore_index=True,
+            )
 
     return performances
 
 
-def run_several_classifiers(train_X, train_Y, val_X=None, val_Y=None, use_gpu_methods=False, cv=True,
-                            scoring="accuracy"):
+def run_several_classifiers(
+    train_X,
+    train_Y,
+    val_X=None,
+    val_Y=None,
+    use_gpu_methods=False,
+    cv=True,
+    scoring="accuracy",
+):
     performances = pd.DataFrame(columns=["method", scoring])
     methods = [
         ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),
         ("SVM", sklearn.svm.SVC(kernel="linear", C=0.025)),
         ("MLP", MLPClassifier(alpha=1, max_iter=10)),
         ("DecisionTree", sklearn.tree.DecisionTreeClassifier(max_depth=5)),
-        ("RandomForest", sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10)),
-        ("AdaBoost", sklearn.ensemble.AdaBoostClassifier())
+        (
+            "RandomForest",
+            sklearn.ensemble.RandomForestClassifier(max_depth=5, n_estimators=10),
+        ),
+        ("AdaBoost", sklearn.ensemble.AdaBoostClassifier()),
     ]
 
     if use_gpu_methods:
         methods = [
             (cuml.neighbors.KNeighborsClassifier(n_neighbors=10), "kNN"),
             (cuml.ensemble.RandomForestClassifier(), "Random Forest"),
-            (XGBClassifier(tree_method="gpu_hist", verbosity=0), "XGBoost")]
+            (XGBClassifier(tree_method="gpu_hist", verbosity=0), "XGBoost"),
+        ]
 
     scorer = sklearn.metrics.get_scorer(scoring)
     for name, clf in methods:
-        if not(cv):
+        if not (cv):
             scaler = sklearn.preprocessing.StandardScaler()
-            pipeline = Pipeline([('transformer', scaler), ('estimator', clf)])
+            pipeline = Pipeline([("transformer", scaler), ("estimator", clf)])
             pipeline.fit(train_X, train_Y)
             pred = pipeline.predict(val_X)
             score = scorer(val_Y, pred)
             print(name + " score:", score)
-            performances = performances.append({"method": name,
-                                                scoring: score}, ignore_index=True)
+            performances = performances.append(
+                {"method": name, scoring: score}, ignore_index=True
+            )
         else:
             scaler = sklearn.preprocessing.StandardScaler()
-            pipeline = Pipeline([('transformer', scaler), ('estimator', clf)])
-            scores = cross_val_score(pipeline, train_X,
-                                     train_Y, cv=5,
-                                     scoring=scoring, n_jobs=1)
+            pipeline = Pipeline([("transformer", scaler), ("estimator", clf)])
+            scores = cross_val_score(
+                pipeline, train_X, train_Y, cv=5, scoring=scoring, n_jobs=1
+            )
             print(name + " scores: ", scores)
             for score in scores:
-                performances = performances.append({"method": name,
-                                                scoring: score}, ignore_index=True)
+                performances = performances.append(
+                    {"method": name, scoring: score}, ignore_index=True
+                )
     return performances

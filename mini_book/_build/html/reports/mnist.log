@@ -36,4 +36,3 @@ Here is a preview of the cell contents:
 ...
 ['', '# Now train:', 'utils.boilerplates.train_classifier(', '    cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True', ')']
 -------------------
-

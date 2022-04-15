@@ -52,4 +52,3 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 utils.boilerplates.train_classifier(
     cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True
 )
-

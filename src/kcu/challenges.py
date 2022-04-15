@@ -1,4 +1,2 @@
-
-
-class MNIST_challenge():
+class MNIST_challenge:
     data_url = ""

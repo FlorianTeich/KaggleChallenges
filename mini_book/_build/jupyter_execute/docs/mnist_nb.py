@@ -5,14 +5,15 @@
 
 
 import os
+
 import numpy as np
 import sklearn.metrics
-from sklearn.neighbors import KNeighborsClassifier
 import torch.nn as nn
 import torch.utils.data
+from sklearn.neighbors import KNeighborsClassifier
 from torch.utils.data import DataLoader
-import kcu as utils
 
+import kcu as utils
 
 # Some Text here
 
@@ -21,7 +22,7 @@ import kcu as utils
 
 cwdir = os.getcwd()
 trainfile = cwdir + "/../../data/MNIST/train.csv"
-if not(os.path.exists( cwdir + "/../../data/MNIST/train.bin.npy")):
+if not (os.path.exists(cwdir + "/../../data/MNIST/train.bin.npy")):
     train_data = np.loadtxt(trainfile, skiprows=1, delimiter=",").astype(np.int16)
     np.save(cwdir + "/../../data/MNIST/train.bin", train_data)
 else:
@@ -50,12 +51,18 @@ val_dataset = utils.dataset.MNISTDataset(val_X, val_Y)
 train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
 
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 cnn = utils.models.MNIST_CNN_01().to(device)
 optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 
 # Now train:
 utils.boilerplates.train_classifier(
-    cnn, optimizer, train_loader, device, 25, nn.CrossEntropyLoss(), val_loader, show_plot=True
+    cnn,
+    optimizer,
+    train_loader,
+    device,
+    25,
+    nn.CrossEntropyLoss(),
+    val_loader,
+    show_plot=True,
 )
-

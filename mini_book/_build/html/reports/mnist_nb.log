@@ -96,6 +96,5 @@ utils.boilerplates.train_classifier(
 [0m[1;32m    672[0m [0;34m[0m[0m
 [1;32m    673[0m         [0;32mreturn[0m [0mself[0m[0;34m.[0m[0m_apply[0m[0;34m([0m[0mconvert[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
 
-[0;31mKeyboardInterrupt[0m: 
-KeyboardInterrupt: 
-
+[0;31mKeyboardInterrupt[0m:
+KeyboardInterrupt:

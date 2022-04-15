@@ -1,6 +1,5 @@
 import setuptools
 
-
 setuptools.setup(
     name="kcu",
     version="0.0.1",

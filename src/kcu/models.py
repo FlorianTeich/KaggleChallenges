@@ -1,7 +1,8 @@
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
 from torch import Tensor
 
 
@@ -9,6 +10,7 @@ class MNIST_CNN_01(nn.Module):
     """
     MNIST CNN Try 01
     """
+
     def __init__(self):
         super(MNIST_CNN_01, self).__init__()
         self.conv1 = nn.Conv2d(1, 32, 3, 1)
@@ -36,13 +38,14 @@ class MNIST_CNN_01(nn.Module):
 
 ModuleType = Union[str, Callable[..., nn.Module]]
 
+
 def _make_nn_module(module_type, *args) -> nn.Module:
     return (
         (
             ReGLU()
-            if module_type == 'ReGLU'
+            if module_type == "ReGLU"
             else GEGLU()
-            if module_type == 'GEGLU'
+            if module_type == "GEGLU"
             else getattr(nn, module_type)(*args)
         )
         if isinstance(module_type, str)
@@ -170,7 +173,7 @@ class ResNet(nn.Module):
 
     @classmethod
     def make_baseline(
-        cls: Type['ResNet'],
+        cls: Type["ResNet"],
         *,
         d_in: int,
         d: int,
@@ -179,7 +182,7 @@ class ResNet(nn.Module):
         dropout_second: float,
         n_blocks: int,
         d_out: int,
-    ) -> 'ResNet':
+    ) -> "ResNet":
         """Create a "baseline" `ResNet`.
         It is a user-friendly alternative to `__init__`. This variation of ResNet was
         used in the original paper.
@@ -191,8 +194,8 @@ class ResNet(nn.Module):
             d_intermidiate=d_intermidiate,
             dropout_first=dropout_first,
             dropout_second=dropout_second,
-            normalization='BatchNorm1d',
-            activation='ReLU',
+            normalization="BatchNorm1d",
+            activation="ReLU",
             d_out=d_out,
         )
 

@@ -2,9 +2,9 @@
 # coding: utf-8
 
 # (mnist)=
-# 
+#
 # # MNIST Challenge
-# 
+#
 # ## Overview
 # The MNIST Challenge is quite popular as it is relatively small in size, high accuracy is easily reachable for newcomers and its (debatably) a Computer Vision dataset.
 # We have a train split of handwritten digits, as grayscale images that are all cropped to 28x28 pixels, fully annotated with their correct object class: 0-9.
@@ -13,30 +13,31 @@
 # My first approach is a k-Nearest Neighbour classifier as these are easy to debug, i.e. its very easy to understand on what basis a classification decision was made.
 # This stands in stark contrast to the CNN approach, which is still considered a blackbox method.
 # More and more works emerge trying to add (human-understandable) explainablilty to CNNs but these are omitted here.
-# 
+#
 # ```{figure} /static/mnist.png
 # ```
 
 # In[1]:
 
 
-get_ipython().run_line_magic('matplotlib', 'inline')
+get_ipython().run_line_magic("matplotlib", "inline")
 import os
+
 import numpy as np
-import torch
 import sklearn.metrics
-from sklearn.neighbors import KNeighborsClassifier
+import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.utils.data
-from torch.utils.data import TensorDataset, DataLoader
-import kcu as utils
+from sklearn.neighbors import KNeighborsClassifier
+from torch.utils.data import DataLoader, TensorDataset
 
+import kcu as utils
 
 cwdir = os.getcwd()
 trainfile = cwdir + "/../../data/MNIST/train.csv"
 # train_data = np.loadtxt(trainfile, skiprows=1, delimiter=",")
-if not(os.path.exists( cwdir + "/../../data/MNIST/train.bin.npy")):
+if not (os.path.exists(cwdir + "/../../data/MNIST/train.bin.npy")):
     train_data = np.loadtxt(trainfile, skiprows=1, delimiter=",").astype(np.int16)
     np.save(cwdir + "/../../data/MNIST/train.bin", train_data)
 else:
@@ -55,13 +56,12 @@ train_Y, val_Y = train_Y[train_inds], train_Y[val_inds]
 
 
 # ## kNN
-# 
+#
 # (ourfirstprog)=
-# 
+#
 # Here are a few lines of code that perform the task we set
 
 # In[2]:
-
 
 
 # Lets start with k-Nearest Neighbour:
@@ -82,6 +82,12 @@ optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 
 # Now train:
 utils.boilerplates.train_classifier(
-    cnn, optimizer, train_loader, device, 3, nn.CrossEntropyLoss(), val_loader, show_plot=True
+    cnn,
+    optimizer,
+    train_loader,
+    device,
+    3,
+    nn.CrossEntropyLoss(),
+    val_loader,
+    show_plot=True,
 )
-
