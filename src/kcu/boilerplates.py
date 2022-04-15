@@ -1,4 +1,5 @@
 import time
+import typing
 from timeit import default_timer as timer
 
 import matplotlib.pyplot as plt
@@ -26,9 +27,28 @@ from xgboost import XGBClassifier
 
 
 def train_classifier(
-    model, optimizer, train_loader, device, epochs, loss_fct, val_loader, show_plot
+    model: torch.nn.Module,
+    optimizer: torch.optim.Optimizer,
+    train_loader: torch.utils.data.DataLoader,
+    device: torch.device,
+    epochs: int,
+    loss_fct,
+    val_loader: torch.utils.data.DataLoader,
+    show_plot: bool,
 ):
-    """TRAINING"""
+    """
+    Train a torch model and evaluate on validation data
+
+    Args:
+        model (_type_): _description_
+        optimizer (_type_): _description_
+        train_loader (_type_): _description_
+        device (_type_): _description_
+        epochs (_type_): _description_
+        loss_fct (_type_): _description_
+        val_loader (_type_): _description_
+        show_plot (bool): _description_
+    """
     test_history_acc = []
     train_history_loss = []
     test_history_loss = []
@@ -76,8 +96,17 @@ def train_classifier(
 
 
 def determine_durations(
-    n_features, n_samples, model, try_samples=[10, 100, 1000, 2000, 4000, 8000]
+    model, n_features=10, n_samples=10000, try_samples=[10, 100, 1000, 2000, 4000, 8000]
 ):
+    """
+    Create artificial dataset and train given model for different dataset sizes to evaluate training duration
+
+    Args:
+        n_features (_type_): _description_
+        n_samples (_type_): _description_
+        model (_type_): _description_
+        try_samples (list, optional): _description_. Defaults to [10, 100, 1000, 2000, 4000, 8000].
+    """
     X_art, y_art = datasets.make_classification(
         n_samples=n_samples, n_features=n_features
     )
@@ -97,6 +126,17 @@ def determine_durations(
 
 
 def time_classifiers(train_X, train_Y, samples=[1000, 2000, 4000, 8000]):
+    """
+    Run various classifiers on dataset with different sample sizes to evaluate training duration
+
+    Args:
+        train_X (_type_): _description_
+        train_Y (_type_): _description_
+        samples (list, optional): _description_. Defaults to [1000, 2000, 4000, 8000].
+
+    Returns:
+        _type_: _description_
+    """
     performances = pd.DataFrame(columns=["method", "time", "samples"])
     methods = [
         ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),
@@ -134,6 +174,21 @@ def run_several_classifiers(
     cv=True,
     scoring="accuracy",
 ):
+    """
+    Run multiple classifiers on the training set and evaluate on validation set
+
+    Args:
+        train_X (_type_): _description_
+        train_Y (_type_): _description_
+        val_X (_type_, optional): _description_. Defaults to None.
+        val_Y (_type_, optional): _description_. Defaults to None.
+        use_gpu_methods (bool, optional): _description_. Defaults to False.
+        cv (bool, optional): _description_. Defaults to True.
+        scoring (str, optional): _description_. Defaults to "accuracy".
+
+    Returns:
+        _type_: _description_
+    """
     performances = pd.DataFrame(columns=["method", scoring])
     methods = [
         ("kNN", sklearn.neighbors.KNeighborsClassifier(5)),

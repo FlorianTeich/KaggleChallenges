@@ -13,6 +13,7 @@ versioneer==0.22
 isort==5.9.3
 pre-commit==2.18.1
 nbstripout==0.5.0
+pandas_profiling==3.1.0
 #cuml
 pytest==6.2.4
 sphinx==4.2.0

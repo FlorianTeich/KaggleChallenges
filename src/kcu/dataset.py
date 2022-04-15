@@ -13,10 +13,19 @@ class DatasetObject:
 
 
 class PennDataset:
+    """
+    The Penn Dataset
+    """
+
     urls = ["https://www.cis.upenn.edu/~jshi/ped_html/PennFudanPed.zip"]
 
 
 class MNISTDataset(torch.utils.data.Dataset):
+    """
+    The MNIST Dataset
+
+    """
+
     def __init__(
         self,
         data,
