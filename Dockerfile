@@ -22,6 +22,9 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linu
 # ENV PATH "$VIRTUAL_ENV/bin:$PATH"
 
 # install the requirements to that folder
+ENV PATH="/opt/conda/bin:$PATH"
+RUN conda activate
+
 RUN pip3 install -r /srv/requirements.txt --target /srv/KaggleChallenge
 
 # copy in the code to be tested (this merges with the folder above)
