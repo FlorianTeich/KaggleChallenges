@@ -3,7 +3,7 @@ FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 # install the prerequisites
-RUN apt-get update && apt-get install -y virtualenv wget build-essentials python3 python3-pip libsm6 libxext6 ffmpeg libfontconfig1 libxrender1 libgl1-mesa-glx
+RUN apt-get update && apt-get install -y virtualenv wget python3 python3-pip libsm6 libxext6 ffmpeg libfontconfig1 libxrender1 libgl1-mesa-glx
 
 # copy in the requirements
 COPY requirements.txt /srv/requirements.txt
