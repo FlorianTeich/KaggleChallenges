@@ -23,6 +23,9 @@ RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linu
 
 # install the requirements to that folder
 ENV PATH="/opt/conda/bin:$PATH"
+RUN conda init bash \
+    && . ~/.bashrc
+
 RUN conda activate
 
 RUN pip3 install -r /srv/requirements.txt --target /srv/KaggleChallenge
