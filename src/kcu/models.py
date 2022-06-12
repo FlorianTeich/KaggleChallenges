@@ -39,12 +39,19 @@ class MNIST_CNN_01(nn.Module):
 ModuleType = Union[str, Callable[..., nn.Module]]
 
 
+class GEGLU(nn.Module):
+    def forward(self, x):
+        x, gates = x.chunk(2, dim=-1)
+        return x * F.gelu(gates)
+
+
 def _make_nn_module(module_type, *args) -> nn.Module:
     return (
         (
-            ReGLU()
-            if module_type == "ReGLU"
-            else GEGLU()
+            # ReGLU()
+            # if module_type == "ReGLU"
+            # else GEGLU()
+            GEGLU()
             if module_type == "GEGLU"
             else getattr(nn, module_type)(*args)
         )

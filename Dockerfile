@@ -1,4 +1,4 @@
-FROM ubuntu:20.04 AS builder
+FROM ubuntu:22.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -31,4 +31,5 @@ FROM setup AS final_test
 
 WORKDIR /srv/KaggleChallenge
 # run the entrypoint (only when the image is instantiated into a container)
+RUN mypy src/kcu/*.py --ignore-missing-imports
 RUN python3 -m pytest -v --junit-xml /srv/test_results.xml src/kcu/test.py
