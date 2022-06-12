@@ -3,7 +3,7 @@ FROM ubuntu:22.04 AS builder
 ENV DEBIAN_FRONTEND=noninteractive
 
 # install the prerequisites
-RUN apt-get update && apt-get install -y python3 python3-pip libsm6 libxext6 ffmpeg libfontconfig1 libxrender1 libgl1-mesa-glx
+RUN apt-get update && apt-get install -y virtualenv python3 python3-pip libsm6 libxext6 ffmpeg libfontconfig1 libxrender1 libgl1-mesa-glx
 
 # copy in the requirements
 COPY requirements.txt /srv/requirements.txt
@@ -12,6 +12,11 @@ COPY requirements.txt /srv/requirements.txt
 RUN mkdir -p /srv/KaggleChallenge
 
 FROM builder AS setup
+
+# Set up and activate virtual environment
+ENV VIRTUAL_ENV "/opt/venv"
+RUN python -m virtualenv venv --python=python3.9 $VIRTUAL_ENV
+ENV PATH "$VIRTUAL_ENV/bin:$PATH"
 
 # install the requirements to that folder
 RUN pip3 install -r /srv/requirements.txt --target /srv/KaggleChallenge
@@ -28,6 +33,12 @@ COPY data /srv/KaggleChallenge/data
 WORKDIR /srv/KaggleChallenge
 
 FROM setup AS final_test
+
+COPY --from=setup /opt/venv /opt/venv
+
+# activate virtual environment
+ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 WORKDIR /srv/KaggleChallenge
 # run the entrypoint (only when the image is instantiated into a container)
