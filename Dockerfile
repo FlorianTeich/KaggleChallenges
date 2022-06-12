@@ -15,7 +15,7 @@ FROM builder AS setup
 
 # Set up and activate virtual environment
 ENV VIRTUAL_ENV "/opt/venv"
-RUN python -m virtualenv venv --python=python3.9 $VIRTUAL_ENV
+RUN virtualenv venv --python=python3.9 $VIRTUAL_ENV
 ENV PATH "$VIRTUAL_ENV/bin:$PATH"
 
 # install the requirements to that folder
