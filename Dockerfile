@@ -14,9 +14,12 @@ RUN mkdir -p /srv/KaggleChallenge
 FROM builder AS setup
 
 # Set up and activate virtual environment
-ENV VIRTUAL_ENV "/opt/venv"
-RUN virtualenv venv --python=python3.9 $VIRTUAL_ENV
-ENV PATH "$VIRTUAL_ENV/bin:$PATH"
+# https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-x86_64.sh
+
+ENV CONDA_DIR /opt/conda
+RUN wget --quiet https://repo.anaconda.com/miniconda/Miniconda3-py39_4.12.0-Linux-x86_64.sh -O ~/miniconda.sh && \
+    /bin/bash ~/miniconda.sh -b -p /opt/conda
+# ENV PATH "$VIRTUAL_ENV/bin:$PATH"
 
 # install the requirements to that folder
 RUN pip3 install -r /srv/requirements.txt --target /srv/KaggleChallenge
@@ -34,11 +37,12 @@ WORKDIR /srv/KaggleChallenge
 
 FROM setup AS final_test
 
-COPY --from=setup /opt/venv /opt/venv
+COPY --from=setup /opt/conda /opt/conda
 
 # activate virtual environment
-ENV VIRTUAL_ENV=/opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+# ENV VIRTUAL_ENV=/opt/venv
+ENV PATH="/opt/conda/bin:$PATH"
+RUN conda activate
 
 WORKDIR /srv/KaggleChallenge
 # run the entrypoint (only when the image is instantiated into a container)
