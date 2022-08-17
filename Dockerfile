@@ -25,11 +25,6 @@ FROM base AS runtime
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
 
-# Create and switch to a new user
-RUN useradd --create-home appuser
-WORKDIR /home/appuser
-USER appuser
-
 # create a folder to hold the downloaded/built requirements
 RUN mkdir -p /srv/KaggleChallenge
 
@@ -42,7 +37,12 @@ COPY mini_book /srv/KaggleChallenge/mini_book
 COPY data /srv/KaggleChallenge/data
 
 # change to the appropriate folder
+#WORKDIR /srv/KaggleChallenge
+
+# Create and switch to a new user
+RUN useradd --create-home appuser
 WORKDIR /srv/KaggleChallenge
+USER appuser
 
 # run the entrypoint (only when the image is instantiated into a container)
 RUN python -m pytest -v --junit-xml /srv/test_results.xml src/kcu/test.py
