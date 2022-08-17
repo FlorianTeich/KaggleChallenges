@@ -45,4 +45,4 @@ WORKDIR /srv/KaggleChallenge
 USER appuser
 
 # run the entrypoint (only when the image is instantiated into a container)
-RUN python -m pytest -v --junit-xml /srv/test_results.xml src/kcu/test.py
+RUN python -m pytest -v --junit-xml /home/appuser/test_results.xml src/kcu/test.py
