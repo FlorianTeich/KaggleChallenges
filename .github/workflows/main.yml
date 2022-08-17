@@ -17,7 +17,7 @@ on:
 jobs:
   build:
     name: build
-    runs-on: [self-hosted, linux]
+    runs-on: [self-hosted]
     steps:
       - name: Check out code
         uses: actions/checkout@v2
