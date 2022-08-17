@@ -20,6 +20,8 @@ try:
     import cuml
 except:
     pass
+import collections
+
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import plot_confusion_matrix
 from sklearn.pipeline import Pipeline
@@ -52,7 +54,7 @@ def train_classifier(
     test_history_acc = []
     train_history_loss = []
     test_history_loss = []
-    train_loss = 0
+    train_loss = 0.0
     for epoch in range(epochs):
         model.train()
         for batch, (X, y) in enumerate(train_loader):
@@ -66,20 +68,20 @@ def train_classifier(
             optimizer.step()
             train_loss += loss.item()
 
-        train_loss = train_loss / len(train_loader.dataset)
+        train_loss = train_loss / len(train_loader.dataset)  # type: ignore
         train_history_loss.append(train_loss)
 
         """ EVALUATION """
         model.eval()
-        test_loss, correct = 0, 0
+        test_loss, correct = 0.0, 0.0
         for batch, (X, y) in enumerate(val_loader):
             X, y = X.to(device), y.to(device)
             pred = model(X)
             test_loss += loss_fct(pred, y).item()
             correct += (pred.argmax(1) == y).type(torch.float).sum().item()
 
-        test_loss /= len(val_loader.dataset)
-        correct /= len(val_loader.dataset)
+        test_loss /= len(val_loader.dataset)  # type: ignore
+        correct /= len(val_loader.dataset)  # type: ignore
         test_history_loss.append(test_loss)
         test_history_acc.append(correct)
 
