@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "58a261fd8588838bf8f58be2918aace57572e8f00466c22cfafd6a7ca925ca97"
+            "sha256": "07529b55bd940008e7275247db05a4de9325b5fc8f481326807e8c70029f571c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -450,7 +450,7 @@
                 "sha256:fa877ca7f6b48054f847b61d6fa7bed5cebb663ebc55e018fda12db09dcc664c",
                 "sha256:fdcec0b8399108577ec290f55551d926d9a1fa6cad45882093a7a07ac5ec147b"
             ],
-            "markers": "python_version >= '3' and (platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32'))))))",
+            "markers": "python_version >= '3' and platform_machine == 'aarch64' or (platform_machine == 'ppc64le' or (platform_machine == 'x86_64' or (platform_machine == 'amd64' or (platform_machine == 'AMD64' or (platform_machine == 'win32' or platform_machine == 'WIN32')))))",
             "version": "==1.1.2"
         },
         "htmlmin": {
@@ -1131,15 +1131,15 @@
             "index": "pypi",
             "version": "==1.23.2"
         },
-        "opencv-python": {
+        "opencv-python-headless": {
             "hashes": [
-                "sha256:408d5332550287aa797fd06bef47b2dfed163c6787668cc82ef9123a9484b56a",
-                "sha256:6247e584813c00c3b9ed69a795da40d2c153dc923d0182e957e1c2f00a554ac2",
-                "sha256:7787bb017ae93d5f9bb1b817ac8e13e45dd193743cb648498fcab21d00cf20a3",
-                "sha256:a512a0c59b6fec0fac3844b2f47d6ecb1a9d18d235e6c5491ce8dbbe0663eae8",
-                "sha256:b293ced62f4360d9f11cf72ae7e9df95320ff7bf5b834d87546f844e838c0c35",
-                "sha256:ca6138b6903910e384067d001763d40f97656875487381aed32993b076f44375",
-                "sha256:f65de0446a330c3b773cd04ba10345d8ce1b15dcac3f49770204e37602d0b3f7"
+                "sha256:3f330468c29882dbbec5af25695c5e575572c6b855cb0f9fe53e14116fd46bfc",
+                "sha256:4bdf982574bf2fefc5f82c86df7cb42e56ad627874c7c0f4d94ecf4ae8885304",
+                "sha256:567a54c1919bcf5b3d20a9830e3c511e57134de8def286ce137c3544a892f98c",
+                "sha256:62e31878641a8f96e773118d1eea9f34bdda87c9990a0faab04ebaafb5ae015c",
+                "sha256:a60e9ff48854ec37be391e19dd634883cc26c2f0f814e5325b3deca33420912c",
+                "sha256:c3c2dda44d601757a508b07d628537c49f31223ad4edd0f747a70d4c852a7b98",
+                "sha256:ca4f013fa958f60fb2327fe87e6127c1ac0ab536890b1d4b00847f417b7af1ba"
             ],
             "index": "pypi",
             "version": "==4.5.5.64"
@@ -1396,7 +1396,7 @@
                 "sha256:818eae35b61733e5c007c3fcd2cfb75ed1bc8b4173c1f70b56cc4c0802d34755",
                 "sha256:e1e0c8c69998452fea90e9179aa2a98ab103f3eed894405b7264e517cc2fcc0f"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.24.0"
         },
         "pybtex-docutils": {
@@ -1519,7 +1519,7 @@
                 "sha256:0123cacc1627ae19ddf3c27a5de5bd67ee4586fbdd6440d9748f8abb483d3e86",
                 "sha256:961d03dc3453ebbc59dbdea9e4e11c5651520a876d0f4db161e8674aae935da9"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==2.8.2"
         },
         "pytz": {
@@ -1719,7 +1719,7 @@
                 "sha256:7c5599b102feddaa661c826c56ab4fee28bfd17f5abca1ebbe3e7f19d7c97983",
                 "sha256:8fefa2a1a1365bf5520aac41836fbee479da67864514bdb821f31ce07ce65349"
             ],
-            "markers": "python_version >= '3.7' and python_version < '4.0'",
+            "markers": "python_version >= '3.7' and python_version < '4'",
             "version": "==2.28.1"
         },
         "scikit-learn": {
@@ -1803,7 +1803,7 @@
                 "sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926",
                 "sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==1.16.0"
         },
         "smmap": {
@@ -2054,7 +2054,7 @@
                 "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b",
                 "sha256:b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
             ],
-            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2'",
+            "markers": "python_version >= '2.6' and python_version not in '3.0, 3.1, 3.2, 3.3'",
             "version": "==0.10.2"
         },
         "tomli": {
@@ -2169,7 +2169,7 @@
                 "sha256:c33ccba33c819596124764c23a97d25f32b28433ba0dedeb77d873a38722c9bc",
                 "sha256:ea6e8fb210b19d950fab93b60c9009226c63a28808bc8386e05301e25883ac0a"
             ],
-            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4.0'",
+            "markers": "python_version >= '2.7' and python_version not in '3.0, 3.1, 3.2, 3.3, 3.4, 3.5' and python_version < '4'",
             "version": "==1.26.11"
         },
         "versioneer": {
