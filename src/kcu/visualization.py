@@ -1,25 +1,35 @@
+"""
+Visualization
+"""
+
 import logging
 import os
 
 import cv2
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
 
-def show_class_distribution(y, relative=True):
+def show_class_distribution(y_dist, relative: bool = True):
+    """
+    TODO: Description
+
+    Args:
+        y_dist (_type_): _description_
+        relative (bool, optional): _description_. Defaults to True.
+    """
     if relative:
         sns.barplot(
-            x=np.unique(y),
-            y=np.unique(y, return_counts=True)[1] / float(len(y)),
-            palette=sns.color_palette("hls", len(np.unique(y))),
+            x=np.unique(y_dist),
+            y=np.unique(y_dist, return_counts=True)[1] / float(len(y_dist)),
+            palette=sns.color_palette("hls", len(np.unique(y_dist))),
         )
     else:
         sns.barplot(
-            x=np.unique(y),
-            y=np.unique(y, return_counts=True)[1],
-            palette=sns.color_palette("hls", len(np.unique(y))),
+            x=np.unique(y_dist),
+            y=np.unique(y_dist, return_counts=True)[1],
+            palette=sns.color_palette("hls", len(np.unique(y_dist))),
         )
     plt.title("Class distribution")
     plt.show()

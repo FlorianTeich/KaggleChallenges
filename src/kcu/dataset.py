@@ -1,16 +1,20 @@
+"""
+Datasets
+"""
 import os
 import pathlib
 from zipfile import ZipFile
 
-import numpy as np
 import torch
 import torch.utils.data
 import torchvision.transforms as transforms
-from genericpath import exists
-from PIL import Image
 
 
 class DatasetObject:
+    """
+    Dataset Object
+    """
+
     urls = [""]
     tags = [""]
 
@@ -21,6 +25,9 @@ class AmazonReviews:
     """
 
     def get_dataset(self):
+        """
+        Get dataset
+        """
         cwd = str(pathlib.Path(__file__).parent.resolve())
         print(cwd)
         cmd = "kaggle datasets download -d bittlingmayer/amazonreviews"
@@ -28,9 +35,9 @@ class AmazonReviews:
         os.makedirs("amazonreviews", exist_ok=True)
         os.system(cmd)
         os.chdir("./amazonreviews/")
-        with ZipFile("../amazonreviews.zip", "r") as zipObj:
+        with ZipFile("../amazonreviews.zip", "r") as zip_obj:
             # Extract all the contents of zip file in current directory
-            zipObj.extractall()
+            zip_obj.extractall()
         return
 
 
@@ -40,6 +47,9 @@ class SandP500:
     """
 
     def get_dataset(self):
+        """
+        Get dataset
+        """
         cwd = str(pathlib.Path(__file__).parent.resolve())
         print(cwd)
         cmd = "kaggle datasets download -d camnugent/sandp500"
@@ -47,9 +57,9 @@ class SandP500:
         os.makedirs("sandp500", exist_ok=True)
         os.system(cmd)
         os.chdir("./sandp500/")
-        with ZipFile("../sandp500.zip", "r") as zipObj:
+        with ZipFile("../sandp500.zip", "r") as zip_obj:
             # Extract all the contents of zip file in current directory
-            zipObj.extractall()
+            zip_obj.extractall()
         return
 
 
@@ -85,11 +95,11 @@ class MNISTDataset(torch.utils.data.Dataset):
         self.transform = transform
 
     def __getitem__(self, index):
-        x = self.data[index]
-        y = self.targets[index]
+        data_x = self.data[index]
+        data_y = self.targets[index]
         if self.transform:
-            x = self.transform(x)
-        return x, y
+            data_x = self.transform(data_x)
+        return data_x, data_y
 
     def __len__(self):
         return len(self.data)

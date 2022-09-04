@@ -1,4 +1,7 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union, cast
+"""
+Models
+"""
+from typing import Callable, Type, Union
 
 import torch
 import torch.nn as nn
@@ -6,13 +9,13 @@ import torch.nn.functional as F
 from torch import Tensor
 
 
-class MNIST_CNN_01(nn.Module):
+class MnistCnn01(nn.Module):
     """
     MNIST CNN Try 01
     """
 
     def __init__(self):
-        super(MNIST_CNN_01, self).__init__()
+        super(MnistCnn01, self).__init__()
         self.conv1 = nn.Conv2d(1, 32, 3, 1)
         self.conv2 = nn.Conv2d(32, 64, 3, 1)
         self.dropout1 = nn.Dropout(0.25)
@@ -20,19 +23,27 @@ class MNIST_CNN_01(nn.Module):
         self.fc1 = nn.Linear(9216, 128)
         self.fc2 = nn.Linear(128, 10)
 
-    def forward(self, x):
-        x = self.conv1(x)
-        x = F.relu(x)
-        x = self.conv2(x)
-        x = F.relu(x)
-        x = F.max_pool2d(x, 2)
-        x = self.dropout1(x)
-        x = torch.flatten(x, 1)
-        x = self.fc1(x)
-        x = F.relu(x)
-        x = self.dropout2(x)
-        x = self.fc2(x)
-        output = F.log_softmax(x, dim=1)
+    def forward(self, data_x):
+        """_summary_
+
+        Args:
+            x (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        data_x = self.conv1(data_x)
+        data_x = F.relu(data_x)
+        data_x = self.conv2(data_x)
+        data_x = F.relu(data_x)
+        data_x = F.max_pool2d(data_x, 2)
+        data_x = self.dropout1(data_x)
+        data_x = torch.flatten(data_x, 1)
+        data_x = self.fc1(data_x)
+        data_x = F.relu(data_x)
+        data_x = self.dropout2(data_x)
+        data_x = self.fc2(data_x)
+        output = F.log_softmax(data_x, dim=1)
         return output
 
 
@@ -40,9 +51,21 @@ ModuleType = Union[str, Callable[..., nn.Module]]
 
 
 class GEGLU(nn.Module):
-    def forward(self, x):
-        x, gates = x.chunk(2, dim=-1)
-        return x * F.gelu(gates)
+    """
+    GEGLU Class
+    """
+
+    def forward(self, data_x):
+        """_summary_
+
+        Args:
+            data_x (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        data_x, gates = data_x.chunk(2, dim=-1)
+        return data_x * F.gelu(gates)
 
 
 def _make_nn_module(module_type, *args) -> nn.Module:
@@ -63,7 +86,9 @@ def _make_nn_module(module_type, *args) -> nn.Module:
 class ResNet(nn.Module):
     """The ResNet model from [gorishniy2021revisiting].
     References:
-        [gorishniy2021revisiting] Yury Gorishniy, Ivan Rubachev, Valentin Khrulkov, Artem Babenko, "Revisiting Deep Learning Models for Tabular Data", 2021
+        [gorishniy2021revisiting] Yury Gorishniy, Ivan Rubachev,
+        Valentin Khrulkov, Artem Babenko,
+        "Revisiting Deep Learning Models for Tabular Data", 2021
     """
 
     class Block(nn.Module):
@@ -92,18 +117,18 @@ class ResNet(nn.Module):
             self.dropout_second = nn.Dropout(dropout_second)
             self.skip_connection = skip_connection
 
-        def forward(self, x: Tensor) -> Tensor:
+        def forward(self, data_x: Tensor) -> Tensor:
             """Perform the forward pass."""
-            x_input = x
-            x = self.normalization(x)
-            x = self.linear_first(x)
-            x = self.activation(x)
-            x = self.dropout_first(x)
-            x = self.linear_second(x)
-            x = self.dropout_second(x)
+            x_input = data_x
+            data_x = self.normalization(data_x)
+            data_x = self.linear_first(data_x)
+            data_x = self.activation(data_x)
+            data_x = self.dropout_first(data_x)
+            data_x = self.linear_second(data_x)
+            data_x = self.dropout_second(data_x)
             if self.skip_connection:
-                x = x_input + x
-            return x
+                data_x = x_input + data_x
+            return data_x
 
     class Head(nn.Module):
         """The final module of `ResNet`."""
@@ -123,13 +148,13 @@ class ResNet(nn.Module):
             self.activation = _make_nn_module(activation)
             self.linear = nn.Linear(d_in, d_out, bias)
 
-        def forward(self, x: Tensor) -> Tensor:
+        def forward(self, data_x: Tensor) -> Tensor:
             """Perform the forward pass."""
             if self.normalization is not None:
-                x = self.normalization(x)
-            x = self.activation(x)
-            x = self.linear(x)
-            return x
+                data_x = self.normalization(data_x)
+            data_x = self.activation(data_x)
+            data_x = self.linear(data_x)
+            return data_x
 
     def __init__(
         self,
@@ -206,9 +231,9 @@ class ResNet(nn.Module):
             d_out=d_out,
         )
 
-    def forward(self, x: Tensor) -> Tensor:
+    def forward(self, data_x: Tensor) -> Tensor:
         """Perform the forward pass."""
-        x = self.first_layer(x)
-        x = self.blocks(x)
-        x = self.head(x)
-        return x
+        data_x = self.first_layer(data_x)
+        data_x = self.blocks(data_x)
+        data_x = self.head(data_x)
+        return data_x

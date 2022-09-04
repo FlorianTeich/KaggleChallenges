@@ -23,6 +23,7 @@ pandas-profiling = "==3.1.0"
 torchvision = "*"
 pytest = "==6.2.4"
 sphinx = "==4.2.0"
+#cuml = "*"
 
 [dev-packages]
 

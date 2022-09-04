@@ -1,64 +1,89 @@
+"""
+Utils
+"""
+
 import math
 
-import colorama
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from ipywidgets import widgets
 from pandas_profiling import ProfileReport
-from pandas_profiling.utils.cache import cache_file
 
 
 def report_dataframe(dataset):
+    """_summary_
+
+    Args:
+        dataset (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     profile = ProfileReport(
         dataset, title="Dataset", html={"style": {"full_width": True}}, sort=None
     )
     return profile
 
 
-def correlation_matrix(X):
+def correlation_matrix(x_data):
+    """_summary_
+
+    Args:
+        X (_type_): _description_
+    """
     plt.rcParams["figure.figsize"] = (12, 6)
-    fig, ax = plt.subplots()
-    corr_ = X.corr()
+    _, axis = plt.subplots()
+    corr_ = x_data.corr()
     mask = np.triu(np.ones_like(corr_.to_numpy(), dtype=bool))
     sns.heatmap(
         corr_,
         annot=True,
         linewidths=0.5,
         fmt=".2f",
-        ax=ax,
+        ax=axis,
         mask=mask,
         cmap="RdBu",
         vmin=-1.0,
         vmax=1.0,
     )
 
-    ax.set_title("Feature correlations")
-    ax.set_xticklabels(ax.get_xticklabels(), rotation=45, horizontalalignment="right")
-    ax.set_yticklabels(ax.get_yticklabels(), rotation=45, horizontalalignment="right")
+    axis.set_title("Feature correlations")
+    axis.set_xticklabels(
+        axis.get_xticklabels(), rotation=45, horizontalalignment="right"
+    )
+    axis.set_yticklabels(
+        axis.get_yticklabels(), rotation=45, horizontalalignment="right"
+    )
     plt.show()
 
 
-def correlation_for_y(X, y, feats_per_line=25):
+def correlation_for_y(data_x, data_y, feats_per_line=25):
+    """_summary_
+
+    Args:
+        X (_type_): _description_
+        y (_type_): _description_
+        feats_per_line (int, optional): _description_. Defaults to 25.
+    """
     plt.rcParams["figure.figsize"] = (12, 6)
-    feats = len(X.columns)
-    for i in y.unique():
-        fig, ax = plt.subplots()
+    feats = len(data_x.columns)
+    for i in data_y.unique():
+        fig, axis = plt.subplots()
         corr_ = (
-            pd.concat([X, y], axis=1, ignore_index=True)
+            pd.concat([data_x, data_y], axis=1, ignore_index=True)
             .corr()[-1][0:-1]
             .to_numpy()
             .reshape(-1, feats_per_line)
         )
-        im1 = ax.imshow(
+        im1 = axis.imshow(
             corr_, cmap="PiYG", interpolation="nearest", vmin=-1.0, vmax=1.0
         )
-        ax.set_title("Class " + str(i) + " feature correlations.")
+        axis.set_title("Class " + str(i) + " feature correlations.")
         for j in range(feats_per_line):
             for k in range(int(feats / feats_per_line) + 1):
                 if (j + (k * 25)) < feats:
-                    text = ax.text(
+                    axis.text(
                         j,
                         k,
                         j + (k * feats_per_line),
@@ -67,27 +92,35 @@ def correlation_for_y(X, y, feats_per_line=25):
                         color="gray",
                     )
         fig.colorbar(im1, orientation="horizontal")
-        ax.set_axis_off()
+        axis.set_axis_off()
         # plt.savefig("correlations_" + str(i) + ".svg")
         plt.show()
 
 
-def multiple_correlation(data, z):
+def multiple_correlation(data, data_z):
+    """_summary_
+
+    Args:
+        data (_type_): _description_
+        z (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     # https://stackoverflow.com/questions/55369159/how-to-perform-three-variable-correlation-with-python-pandas
     cor = data.corr()
     new_corr = np.zeros_like(cor.to_numpy())
     # Independent variables
-    for num1, x in enumerate(data.columns):
-        for num2, y in enumerate(data.columns[:num1]):
-            if x != y:
-                xz = cor.loc[x, z]
-                yz = cor.loc[y, z]
-                xy = cor.loc[x, y]
-                Rxyz = math.sqrt(
-                    (abs(xz**2) + abs(yz**2) - 2 * xz * yz * xy)
-                    / (1 - abs(xy**2))
+    for num1, data_x in enumerate(data.columns):
+        for num2, data_y in enumerate(data.columns[:num1]):
+            if data_x != data_y:
+                xz_ = cor.loc[data_x, data_z]
+                yz_ = cor.loc[data_y, data_z]
+                xy_ = cor.loc[data_x, data_y]
+                rxyz = math.sqrt(
+                    (abs(xz_**2) + abs(yz_**2) - 2 * xz_ * yz_ * xy_)
+                    / (1 - abs(xy_**2))
                 )
-                R2 = Rxyz**2
-                new_corr[num1, num2] = R2
-    # TODO: Vectorize it!
+                r_2 = rxyz**2
+                new_corr[num1, num2] = r_2
     return new_corr
