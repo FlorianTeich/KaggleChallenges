@@ -49,7 +49,7 @@ train_loader = DataLoader(train_dataset, batch_size=128, shuffle=True)
 val_loader = DataLoader(val_dataset, batch_size=8, shuffle=False)
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-cnn = utils.models.MNIST_CNN_01().to(device)
+cnn = utils.models.MnistCnn01().to(device)
 optimizer = torch.optim.Adam(cnn.parameters(), lr=0.001)
 
 # Now train:
@@ -64,7 +64,7 @@ utils.boilerplates.train_classifier(
 [0;32m<ipython-input-2-f62851e29612>[0m in [0;36m<module>[0;34m[0m
 [1;32m     31[0m [0;34m[0m[0m
 [1;32m     32[0m [0mdevice[0m [0;34m=[0m [0mtorch[0m[0;34m.[0m[0mdevice[0m[0;34m([0m[0;34m'cuda'[0m [0;32mif[0m [0mtorch[0m[0;34m.[0m[0mcuda[0m[0;34m.[0m[0mis_available[0m[0;34m([0m[0;34m)[0m [0;32melse[0m [0;34m'cpu'[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
-[0;32m---> 33[0;31m [0mcnn[0m [0;34m=[0m [0mutils[0m[0;34m.[0m[0mmodels[0m[0;34m.[0m[0mMNIST_CNN_01[0m[0;34m([0m[0;34m)[0m[0;34m.[0m[0mto[0m[0;34m([0m[0mdevice[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
+[0;32m---> 33[0;31m [0mcnn[0m [0;34m=[0m [0mutils[0m[0;34m.[0m[0mmodels[0m[0;34m.[0m[0mMnistCnn01[0m[0;34m([0m[0;34m)[0m[0;34m.[0m[0mto[0m[0;34m([0m[0mdevice[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
 [0m[1;32m     34[0m [0moptimizer[0m [0;34m=[0m [0mtorch[0m[0;34m.[0m[0moptim[0m[0;34m.[0m[0mAdam[0m[0;34m([0m[0mcnn[0m[0;34m.[0m[0mparameters[0m[0;34m([0m[0;34m)[0m[0;34m,[0m [0mlr[0m[0;34m=[0m[0;36m0.001[0m[0;34m)[0m[0;34m[0m[0;34m[0m[0m
 [1;32m     35[0m [0;34m[0m[0m
 
