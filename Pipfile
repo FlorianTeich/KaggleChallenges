@@ -24,6 +24,9 @@ torchvision = "*"
 pytest = "==6.2.4"
 sphinx = "==4.2.0"
 #cuml = "*"
+pyspark = "*"
+findspark = "*"
+colorama = "*"
 
 [dev-packages]
 

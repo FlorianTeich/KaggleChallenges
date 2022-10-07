@@ -1,0 +1,33 @@
+[tool.poetry]
+name = "kagglechallenges"
+version = "0.1.0"
+description = ""
+authors = ["Florian Teich <florianteich@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.8"
+numpy = "^1.23.2"
+torch = "1.12.1"
+scikit-learn = "^1.1.2"
+matplotlib = "^3.5.3"
+jupyter-book = "0.12.3"
+opencv-python = "4.5.5.64"
+pandas = "1.3.4"
+xgboost = "1.5.2"
+seaborn = "0.11.2"
+coverage = "6.3.2"
+mypy = "0.942"
+versioneer = "0.22"
+isort = "5.9.3"
+pre-commit = "2.18.1"
+nbstripout = "0.5.0"
+pandas-profiling = "3.1.0"
+torchvision = "^0.13.1"
+pytest = "6.2.4"
+Sphinx = "4.2.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

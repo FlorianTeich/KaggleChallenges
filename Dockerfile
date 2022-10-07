@@ -1,4 +1,4 @@
-FROM python:3.10-slim as base
+FROM python:3.10.7-slim as base
 
 # Setup env
 ENV LANG C.UTF-8
@@ -11,20 +11,25 @@ FROM base AS python-deps
 
 # Install pipenv and compilation dependencies
 RUN pip install pipenv
-RUN apt-get update && apt-get install -y --no-install-recommends gcc
+RUN apt-get update && apt-get install -y gcc g++ gfortran libopenblas-dev liblapack-dev
 
 # Install python dependencies in /.venv
-COPY Pipfile .
-COPY Pipfile.lock .
-RUN PIPENV_VENV_IN_PROJECT=1 pipenv install --deploy
-
+#RUN pip install "poetry==1.1.14"
+RUN python -m venv /venv
+#COPY pyproject.toml poetry.lock ./
+COPY Pipfile ./
+#RUN . /venv/bin/activate && pipenv install
+ENV PIPENV_VENV_IN_PROJECT 1
+RUN pipenv install
+#RUN . /venv/bin/activate && poetry install --no-dev --no-root
+#RUN . /venv/bin/activate && poetry build
 
 FROM base AS runtime
 
 # Copy virtual env from python-deps stage
 COPY --from=python-deps /.venv /.venv
 ENV PATH="/.venv/bin:$PATH"
-
+COPY . .
 # create a folder to hold the downloaded/built requirements
 RUN mkdir -p /srv/KaggleChallenge
 
@@ -46,3 +51,5 @@ USER appuser
 
 # run the entrypoint (only when the image is instantiated into a container)
 RUN python -m pytest -v --junit-xml /home/appuser/test_results.xml src/kcu/test.py
+COPY --from=python-deps /Pipfile.lock /srv/KaggleChallenge/Pipfile.lock
+CMD ["cat", "Pipfile.lock"]
