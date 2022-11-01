@@ -24,9 +24,10 @@ docker build .
 ## 🪣 Todo
 
 - [ ] mypy
+- [ ] pydantic
+- [ ] streamlit apps
+- [ ] fastapi
+- [ ] pyspark
 - [ ] coverage
 - [ ] versioneer
-- [ ] pre-commit-hook black
-- [ ] isort
-- [ ] docker-compose
 - [ ] kubernetes
