@@ -2,16 +2,18 @@
 
 ![](https://img.shields.io/github/repo-size/FlorianTeich/KaggleChallenges)
 
-![](https://img.shields.io/github/workflow/status/FlorianTeich/KaggleChallenges/CI)
+![](https://img.shields.io/github/actions/workflow/status/FlorianTeich/KaggleChallenges/main.yml?branch=main)
 
+![Microservice Architecture](/assets/trailer.svg)
 
 Amalgamation of various exploration techniques and ML methods for several Kaggle challenges.
 These notebooks might contain code from other sites/people.
 
-## 🚀 Build in Docker Container
+## 🚀 Build in Docker-Compose
 
 ```
-docker build .
+docker-compose build
+docker-compose up
 ```
 
 ## ✨ Current Kaggle Challenges:
@@ -28,5 +30,4 @@ docker build .
 - [ ] versioneer
 - [ ] pre-commit-hook black
 - [ ] isort
-- [ ] docker-compose
 - [ ] kubernetes

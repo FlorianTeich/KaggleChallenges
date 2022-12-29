@@ -166,6 +166,11 @@ websocket-client = "==1.4.2"
 widgetsnbextension = "==3.6.1"
 xgboost = "==1.7.1"
 zipp = "==3.11.0"
+jupyter = "1.0.0"
+jupyterlab = "3.5.2"
+kafka-python = "2.0.2"
+minio = "7.1.12"
+mlflow = "2.1.1"
 
 [dev-packages]
 
