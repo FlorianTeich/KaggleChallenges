@@ -8,7 +8,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from pandas_profiling import ProfileReport
+
+# from pandas_profiling import ProfileReport
 
 
 def report_dataframe(dataset):
@@ -20,10 +21,10 @@ def report_dataframe(dataset):
     Returns:
         _type_: _description_
     """
-    profile = ProfileReport(
-        dataset, title="Dataset", html={"style": {"full_width": True}}, sort=None
-    )
-    return profile
+    # profile = ProfileReport(
+    #    dataset, title="Dataset", html={"style": {"full_width": True}}, sort=None
+    # )
+    return None
 
 
 def correlation_matrix(x_data):

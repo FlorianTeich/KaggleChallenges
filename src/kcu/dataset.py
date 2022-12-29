@@ -19,6 +19,24 @@ class DatasetObject:
     tags = [""]
 
 
+class TitanicDataset:
+    """
+    Titanic Dataset
+    """
+
+    def get_dataset(self):
+        """
+        Get dataset
+        """
+        cwd = str(pathlib.Path(__file__).parent.resolve())
+        print(cwd)
+        cmd = "kaggle competitions download -c titanic"
+        os.chdir(cwd + "/../../data/")
+        os.makedirs("titanic", exist_ok=True)
+        os.system(cmd)
+        return
+
+
 class AmazonReviews:
     """
     Amazon Reviews for Sentiment Analysis

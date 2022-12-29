@@ -11,13 +11,14 @@ FROM base AS python-deps
 
 # Install pipenv and compilation dependencies
 RUN pip install pipenv
-RUN apt-get update && apt-get install -y gcc g++ gfortran libopenblas-dev liblapack-dev
+RUN apt-get update && apt-get install -y gcc g++ gfortran libopenblas-dev liblapack-dev default-jdk
 
 # Install python dependencies in /.venv
 #RUN pip install "poetry==1.1.14"
 RUN python -m venv /venv
 #COPY pyproject.toml poetry.lock ./
 COPY Pipfile ./
+COPY Pipfile.lock ./
 #RUN . /venv/bin/activate && pipenv install
 ENV PIPENV_VENV_IN_PROJECT 1
 RUN pipenv install
@@ -47,9 +48,8 @@ COPY data /srv/KaggleChallenge/data
 # Create and switch to a new user
 RUN useradd --create-home appuser
 WORKDIR /srv/KaggleChallenge
+COPY run_pytest.sh ./run_pytest.sh
+RUN chmod +x /srv/KaggleChallenge/run_pytest.sh
 USER appuser
 
-# run the entrypoint (only when the image is instantiated into a container)
-RUN python -m pytest -v --junit-xml /home/appuser/test_results.xml src/kcu/test.py
-COPY --from=python-deps /Pipfile.lock /srv/KaggleChallenge/Pipfile.lock
-CMD ["cat", "Pipfile.lock"]
+CMD ["tail", "-F", "anything"]

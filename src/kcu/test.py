@@ -4,21 +4,18 @@ Tests
 import os
 import unittest
 
+from initialization import setup_db
 from kcu import visualization
 
 
-class TestVisualization(unittest.TestCase):
+class TestSetups(unittest.TestCase):
     """
-    Test Visualizations
+    Test Setups
     """
 
-    def test_show_image_from_path(self):
+    def test_setup_titanic(self):
         """
-        Test for showing an image from a path
+        Test for database setup
         """
-        self.assertEqual(
-            visualization.show_image_from_path(
-                os.path.dirname(__file__) + "/../../data/red_panda.jpeg", hidden=True
-            ),
-            1,
-        )
+        res = setup_db.setup_db_titanic()
+        self.assertEqual(1, res)
