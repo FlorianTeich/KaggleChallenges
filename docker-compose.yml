@@ -34,7 +34,7 @@ services:
     depends_on:
       - postgres
     #command: sh /srv/KaggleChallenge/run_pytest.sh
-    command: jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/srv/KaggleChallenge
+    command: jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/srv/KaggleChallenge --ServerApp.token=f9a3bd4e9f2c3be01cd629154cfb224c2703181e050254b5
     ports:
       - "8889:8888"
     volumes:
