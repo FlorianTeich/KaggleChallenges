@@ -19,19 +19,21 @@ RUN pip install "poetry==$POETRY_VERSION"
 RUN python -m venv /venv
 COPY pyproject.toml poetry.lock README.md ./
 RUN poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
-COPY poetry_demo/ ./poetry_demo/
-RUN poetry build && /venv/bin/pip install dist/*.whl
+
+FROM python-deps as python-package-builder
+COPY src/ ./src/
+RUN /venv/bin/pip install src/
 
 # RUNTIME
 FROM base AS runtime
 RUN apt-get update && apt-get install -y default-jdk
 RUN useradd --create-home appuser
 RUN mkdir -p /srv/KaggleChallenge
-COPY run_pytest.sh /srv/KaggleChallenge
-RUN chmod +x /srv/KaggleChallenge/run_pytest.sh
+#COPY run_pytest.sh /srv/KaggleChallenge
+#RUN chmod +x /srv/KaggleChallenge/run_pytest.sh
 RUN chown -R appuser:appuser /srv/KaggleChallenge
 USER appuser
-COPY --from=python-deps /venv /venv
+COPY --from=python-package-builder /venv /venv
 ENV PATH="/venv/bin:$PATH"
 COPY . .
 RUN mkdir -p /srv/KaggleChallenge/src && \
@@ -39,11 +41,11 @@ RUN mkdir -p /srv/KaggleChallenge/src && \
     mkdir -p /srv/KaggleChallenge/data && \
     mkdir -p /srv/KaggleChallenge/extra_data && \
     mkdir -p /srv/KaggleChallenge/plugins
+
 COPY src /srv/KaggleChallenge/src
 COPY mini_book /srv/KaggleChallenge/mini_book
 COPY data /srv/KaggleChallenge/data
 COPY plugins /srv/KaggleChallenge/plugins
 WORKDIR /srv/KaggleChallenge
 COPY entrypoint.sh entrypoint.sh
-#CMD ["tail", "-F", "anything"]
 CMD ["sh", "entrypoint.sh"]

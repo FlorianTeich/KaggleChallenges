@@ -1,10 +1,10 @@
 [tool.poetry]
-name = "poetry-demo"
+name = "kcu"
 version = "0.1.0"
 description = ""
 authors = ["Florian Teich <florianteich@gmail.com>"]
 readme = "README.md"
-packages = [{include = "poetry_demo"}]
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "==3.9.*"
