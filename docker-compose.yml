@@ -1,25 +1,5 @@
 version: "3.9"
 
-x-common:
-  &common
-  image: apache/airflow:2.3.0
-  user: "${AIRFLOW_UID}:0"
-  env_file:
-    - .env
-  volumes:
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./plugins:/opt/airflow/plugins
-    - /var/run/docker.sock:/var/run/docker.sock
-
-x-depends-on:
-  &depends-on
-  depends_on:
-    postgres:
-      condition: service_healthy
-    airflow-init:
-      condition: service_completed_successfully
-
 services:
 
   kcu:
@@ -33,19 +13,25 @@ services:
       SQL_PORT: "5432"
     depends_on:
       - postgres
-    #command: sh /srv/KaggleChallenge/run_pytest.sh
-    command: jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/srv/KaggleChallenge --ServerApp.token=f9a3bd4e9f2c3be01cd629154cfb224c2703181e050254b5
+    command: jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/srv/KaggleChallenge
     ports:
       - "8889:8888"
     volumes:
+      - ./src/notebooks:/srv/KaggleChallenge/extra_data_new
       - myapp:/srv/KaggleChallenge/extra_data
 
   mlflow:
     image: ghcr.io/mlflow/mlflow
-    restart: always
-    command: mlflow server --host 0.0.0.0
+    restart: 'no'
+    command: /bin/sh -c "pip3 install minio && echo test && python3 /srv/create_bucket.py && mlflow server --host 0.0.0.0"
+    environment:
+      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
+      AWS_ACCESS_KEY_ID: GArH6uh55RJ44MBc
+      AWS_SECRET_ACCESS_KEY: wZki2TznKq0w39wprAqm7KvKCBPeH5nm
     ports:
       - "5000:5000"
+    volumes:
+      - ./mlflow_vol:/srv
 
   db:
     image: "postgres:14.5"
@@ -54,16 +40,6 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_USER: postgres
       POSTGRES_DB: postgres
-
-  pgadmin:
-    container_name: pgadmin4_container
-    image: dpage/pgadmin4
-    restart: always
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
-    ports:
-      - "5050:80"
 
   minio:
     image: minio/minio
@@ -75,6 +51,8 @@ services:
     environment:
       MINIO_ROOT_USER: masoud
       MINIO_ROOT_PASSWORD: Strong#Pass#2022
+      MINIO_ACCESS_KEY: GArH6uh55RJ44MBc
+      MINIO_SECRET_KEY: wZki2TznKq0w39wprAqm7KvKCBPeH5nm
     command: server --console-address ":9001" /data
 
   zookeeper:
@@ -110,40 +88,6 @@ services:
       retries: 5
     env_file:
       - .env
-
-  scheduler:
-    <<: *common
-    <<: *depends-on
-    container_name: airflow-scheduler
-    command: scheduler
-    restart: on-failure
-    ports:
-      - "8793:8793"
-
-  webserver:
-    <<: *common
-    <<: *depends-on
-    container_name: airflow-webserver
-    restart: always
-    command: webserver
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
-      interval: 30s
-      timeout: 30s
-      retries: 5
-
-  airflow-init:
-    <<: *common
-    container_name: airflow-init
-    entrypoint: /bin/bash
-    command:
-      - -c
-      - |
-        mkdir -p /sources/logs /sources/dags /sources/plugins
-        chown -R "${AIRFLOW_UID}:0" /sources/{logs,dags,plugins}
-        exec /entrypoint airflow version
 
 volumes:
   minio_storage: {}

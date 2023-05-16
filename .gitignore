@@ -5,3 +5,4 @@ __pycache__/
 *.egg-info/
 .idea/
 logs/
+mini_book/_build/*
