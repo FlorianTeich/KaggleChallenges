@@ -17,9 +17,9 @@ RUN pip install pipenv
 RUN apt-get update && apt-get install -y gcc g++ gfortran libopenblas-dev liblapack-dev
 RUN pip install "poetry==$POETRY_VERSION"
 RUN python -m venv /venv
-COPY pyproject.toml poetry.lock ./
+COPY pyproject.toml poetry.lock README.md ./
 RUN poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
-COPY . .
+COPY poetry_demo/ ./poetry_demo/
 RUN poetry build && /venv/bin/pip install dist/*.whl
 
 # RUNTIME
@@ -44,4 +44,6 @@ COPY mini_book /srv/KaggleChallenge/mini_book
 COPY data /srv/KaggleChallenge/data
 COPY plugins /srv/KaggleChallenge/plugins
 WORKDIR /srv/KaggleChallenge
-CMD ["tail", "-F", "anything"]
+COPY entrypoint.sh entrypoint.sh
+#CMD ["tail", "-F", "anything"]
+CMD ["sh", "entrypoint.sh"]

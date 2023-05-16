@@ -2,44 +2,91 @@ version: "3.9"
 
 services:
 
+  loki:
+    image: grafana/loki:2.8.0
+    ports:
+      - "3100:3100"
+    command: -config.file=/etc/loki/local-config.yaml
+
+  grafana:
+    environment:
+      - GF_PATHS_PROVISIONING=/etc/grafana/provisioning
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+    entrypoint:
+      - sh
+      - -euc
+      - |
+        mkdir -p /etc/grafana/provisioning/datasources
+        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
+        apiVersion: 1
+        datasources:
+        - name: Loki
+          type: loki
+          access: proxy 
+          orgId: 1
+          url: http://loki:3100
+          basicAuth: false
+          isDefault: true
+          version: 1
+          editable: false
+        EOF
+        /run.sh
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+
   kcu:
     build: .
     restart: 'no'
     environment:
-      SQL_PASSWORD: postgres
-      SQL_USER: postgres
-      SQL_DB: postgres
-      SQL_HOST: db
-      SQL_PORT: "5432"
-    depends_on:
-      - postgres
-    command: jupyter lab --ip=0.0.0.0 --no-browser --notebook-dir=/srv/KaggleChallenge
+      SQL_PASSWORD: ${SQL_PASSWORD}
+      SQL_USER: ${SQL_USER}
+      SQL_DB: ${SQL_DB}
+      SQL_HOST: postgres
+      SQL_PORT: ${SQL_PORT}
+      JUPYTER_TOKEN: ${JUPYTER_TOKEN}
     ports:
       - "8889:8888"
+      - "8501:8501"
     volumes:
-      - ./src/notebooks:/srv/KaggleChallenge/extra_data_new
       - myapp:/srv/KaggleChallenge/extra_data
+
+  neo4j:
+    image: neo4j:5.6.0
+    restart: unless-stopped
+    ports:
+      - 7474:7474
+      - 7687:7687
+    #volumes:
+    #  - ./neo4j/conf:/conf
+    #  - ./neo4j/data:/data
+    #  - ./neo4j/import:/import
+    #  - ./neo4j/logs:/logs
+    #  - ./neo4j/plugins:/plugins
+    environment: 
+      - NEO4J_dbms_memory_pagecache_size=1G
+      - NEO4J_dbms.memory.heap.initial_size=1G
+      - NEO4J_dbms_memory_heap_max__size=1G
 
   mlflow:
     image: ghcr.io/mlflow/mlflow
-    restart: 'no'
-    command: /bin/sh -c "pip3 install minio && echo test && python3 /srv/create_bucket.py && mlflow server --host 0.0.0.0"
-    environment:
-      MLFLOW_S3_ENDPOINT_URL: http://minio:9000
-      AWS_ACCESS_KEY_ID: GArH6uh55RJ44MBc
-      AWS_SECRET_ACCESS_KEY: wZki2TznKq0w39wprAqm7KvKCBPeH5nm
+    restart: always
+    command: mlflow server --host 0.0.0.0
     ports:
       - "5000:5000"
-    volumes:
-      - ./mlflow_vol:/srv
 
-  db:
+  postgres:
     image: "postgres:14.5"
     restart: always
     environment:
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: postgres
+      POSTGRES_PASSWORD: ${SQL_PASSWORD}
+      POSTGRES_USER: ${SQL_USER}
+      POSTGRES_DB: ${SQL_DB}
+  
+  cloudbeaver:
+    image: dbeaver/cloudbeaver:23.0.4
+    restart: always
 
   minio:
     image: minio/minio
@@ -49,45 +96,58 @@ services:
     volumes:
       - minio_storage:/data
     environment:
-      MINIO_ROOT_USER: masoud
-      MINIO_ROOT_PASSWORD: Strong#Pass#2022
-      MINIO_ACCESS_KEY: GArH6uh55RJ44MBc
-      MINIO_SECRET_KEY: wZki2TznKq0w39wprAqm7KvKCBPeH5nm
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     command: server --console-address ":9001" /data
 
   zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
-    ports:
-      - 22181:2181
+    container_name: zookeper-data
+    image: quay.io/debezium/zookeeper:latest
 
   kafka:
-    image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper
+    container_name: kafka-data
+    image: quay.io/debezium/kafka:latest
     ports:
-      - 29092:29092
+     - 9092:9092
+     - 29092:29092
+    links:
+     - zookeeper
     environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+     - ZOOKEEPER_CONNECT=zookeeper:2181
+     - KAFKA_BROKER_ID=1
+     - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+     - KAFKA_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+     - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+     - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+     - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
 
-  postgres:
-    image: postgres:13
-    container_name: postgres
+  redis:
+    image: redis:6.2-alpine
+    restart: always
     ports:
-      - "5434:5432"
-    healthcheck:
-      test: ["CMD", "pg_isready", "-U", "airflow"]
-      interval: 5s
-      retries: 5
-    env_file:
-      - .env
+      - '6380:6380'
+    command: redis-server --save 20 1 --loglevel warning
+
+  connect:
+    container_name: debezium-data
+    build:
+      context: debezium
+      args:
+        DEBEZIUM_VERSION: latest
+    ports:
+     - 8083:8083
+     - 5005:5005
+    links:
+     - kafka:kafka
+     - postgres:postgres
+    environment:
+     - BOOTSTRAP_SERVERS=kafka:9092
+     - GROUP_ID=1
+     - CONFIG_STORAGE_TOPIC=my-connect-configs
+     - OFFSET_STORAGE_TOPIC=my-connect-offsets
+     - CONNECT_JDBC_URL=jdbc:postgresql://postgres:5432/database
 
 volumes:
   minio_storage: {}
