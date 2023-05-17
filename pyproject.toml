@@ -33,6 +33,12 @@ kafka-python = "^2.0.2"
 minio = "^7.1.12"
 mlflow = "^2.1.1"
 great-expectations = "0.14.12"
+pydantic = "==1.10.7"
+requests = "==2.28.2"
+celery = "*"
+redis = "*"
+streamlit = "*"
+torch = {platform = "linux", url = "https://download.pytorch.org/whl/cpu/torch-2.0.1%2Bcpu-cp39-cp39-linux_x86_64.whl"}
 
 [build-system]
 requires = ["poetry-core"]
