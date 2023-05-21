@@ -166,6 +166,7 @@ websocket-client = "==1.4.2"
 widgetsnbextension = "==3.6.1"
 xgboost = "==1.7.1"
 zipp = "==3.11.0"
+dill = "*"
 
 [dev-packages]
 

@@ -6,3 +6,6 @@ __pycache__/
 .idea/
 logs/
 mini_book/_build/*
+models/
+*.db
+*.pickle
