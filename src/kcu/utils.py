@@ -1,15 +1,65 @@
 """
 Utils
 """
-
+import os
 import math
-
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import seaborn as sns
+import matplotlib.pyplot as plt
+from pyspark.sql import SparkSession
 
-# from pandas_profiling import ProfileReport
+
+def get_default_backend_config():
+    return {
+        "host": os.getenv("SQL_HOST"),
+        "port": os.getenv("SQL_PORT"),
+        "db": os.getenv("SQL_DB"),
+        "dbtype": "postgresql",
+        "user": os.getenv("SQL_USER"),
+        "password": os.getenv("SQL_PASSWORD"),
+    }
+
+
+def get_pyspark_driver(driver_name):
+    if driver_name == "sqlite":
+        return "org.sqlite.JDBC"
+    elif driver_name == "postgresql":
+        return "org.postgresql.Driver"
+
+
+def get_pyspark_session(backend_type=None):
+    sess = SparkSession \
+        .builder \
+        .appName("appname")
+
+    pluginpath = os.path.abspath(os.path.dirname(__file__)) + "/../../plugins"
+    if backend_type == "sqlite":
+        sess = sess.config(
+                        "spark.jars",
+                        "{}/sqlite-jdbc-3.34.0.jar".format(pluginpath)) \
+                    .config(
+                        "spark.driver.extraClassPath",
+                        "{}/sqlite-jdbc-3.34.0.jar".format(pluginpath))
+    elif backend_type == "postgresql":
+        sess = sess.config("spark.jars", pluginpath + "/postgresql-42.5.1.jar")
+
+    return sess.getOrCreate()
+
+
+def get_df_from_backend(table, backend, sess):
+    df = sess.read.format('jdbc').options("driver", get_pyspark_driver(backend["dbtype"]))
+
+    if backend["dbtype"] == "sqlite":
+        df = df.options(dbtable=table,
+                        url='jdbc:' + "sqlite:///" + backend["filepath"])
+    elif backend["dbtype"] == "postgresql":
+        df = df.option("url", "jdbc:postgresql://" + backend["host"] + ":" + str(backend["port"]) + "/" + backend["db"]) \
+        .option("dbtable", table) \
+        .option("user", backend["user"]) \
+        .option("password", backend["password"])
+
+    return df.load()
 
 
 def report_dataframe(dataset):

@@ -1,5 +1,5 @@
 ARG DEBEZIUM_VERSION
-FROM quay.io/debezium/connect:latest
+FROM quay.io/debezium/connect:2.3
 ENV KAFKA_CONNECT_JDBC_DIR=$KAFKA_CONNECT_PLUGINS_DIR/kafka-connect-jdbc
 
 ARG POSTGRES_VERSION=42.2.8
