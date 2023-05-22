@@ -29,8 +29,6 @@ FROM base AS runtime
 RUN apt-get update && apt-get install -y default-jdk procps
 RUN useradd --create-home appuser
 RUN mkdir -p /srv/KaggleChallenge
-#COPY run_pytest.sh /srv/KaggleChallenge
-#RUN chmod +x /srv/KaggleChallenge/run_pytest.sh
 RUN chown -R appuser:appuser /srv/KaggleChallenge
 USER appuser
 COPY --from=python-package-builder /venv /venv

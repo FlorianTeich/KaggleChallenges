@@ -166,6 +166,27 @@ services:
      - OFFSET_STORAGE_TOPIC=my-connect-offsets
      - CONNECT_JDBC_URL=jdbc:postgresql://postgres:5432/database
 
+  mongodb:
+    image: mongo:6.0.5
+    ports:
+      - '27017:27017'
+
+  superset:
+    image: apache/superset:2.1.0
+    ports:
+      - 8060:8088
+    command: >
+      bash -c "superset fab create-admin &&
+               --username ${SUPERSET_USERNAME} \
+               --firstname ${SUPERSET_FIRSTNAME} \
+               --lastname ${SUPERSET_LASTNAME} \
+               --email ${SUPERSET_EMAIL} \
+               --password ${SUPERSET_PASSWORD} &&
+               superset db upgrade &&
+               superset load_examples &&
+               superset init"
+
+
 volumes:
   minio_storage: {}
   myapp:

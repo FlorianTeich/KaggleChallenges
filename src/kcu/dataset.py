@@ -24,14 +24,14 @@ class TitanicDataset:
     Titanic Dataset
     """
 
-    def get_dataset(self):
+    def get_dataset(self, path: str):
         """
         Get dataset
         """
-        cwd = str(pathlib.Path(__file__).parent.resolve())
-        print(cwd)
+        #cwd = str(pathlib.Path(__file__).parent.resolve())
+        #print(cwd)
         cmd = "kaggle competitions download -c titanic"
-        os.chdir(cwd + "/../../data/")
+        #os.chdir(cwd + "/../../data/")
         os.makedirs("titanic", exist_ok=True)
         os.system(cmd)
         return

@@ -3,14 +3,24 @@ Utils
 """
 import os
 import math
+import typing
+import psycopg2
 import numpy as np
 import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
+from pyspark.sql import DataFrame
 from pyspark.sql import SparkSession
+from sqlalchemy import create_engine
 
 
-def get_default_backend_config():
+def get_default_backend_config() -> typing.Dict:
+    """
+    Returns a dictionary of default connection settings to the SQL backend
+
+    Returns:
+        typing.Dict: dicitonary containing connection values
+    """
     return {
         "host": os.getenv("SQL_HOST"),
         "port": os.getenv("SQL_PORT"),
@@ -21,14 +31,40 @@ def get_default_backend_config():
     }
 
 
-def get_pyspark_driver(driver_name):
+def get_sql_url(backend: typing.Dict) -> str:
+    if backend["dbtype"] == "postgresql":
+        return "postgresql+psycopg2://" + backend["host"] + ":" + str(backend["port"]) + "/" + backend["db"]
+
+
+def get_sql_engine(backend: typing.Dict):
+    return create_engine(get_sql_url(backend))
+
+
+def get_pyspark_driver(driver_name: str) -> str:
+    """
+    Returns the driver-string of the given backend
+
+    Args:
+        driver_name (str): the name of the backend
+    Returns:
+        str: driver string
+    """
     if driver_name == "sqlite":
         return "org.sqlite.JDBC"
     elif driver_name == "postgresql":
         return "org.postgresql.Driver"
 
 
-def get_pyspark_session(backend_type=None):
+def get_pyspark_session(backend_type: str=None) -> SparkSession:
+    """
+    Returns Sparksession for given backend
+
+    Args:
+        backend_type (str): backend
+
+    Returns:
+        SparkSession: the built SparkSession
+    """
     sess = SparkSession \
         .builder \
         .appName("appname")
@@ -47,7 +83,17 @@ def get_pyspark_session(backend_type=None):
     return sess.getOrCreate()
 
 
-def get_df_from_backend(table, backend, sess):
+def get_df_from_backend(table: str, backend: typing.Dict, sess: SparkSession) -> DataFrame:
+    """
+    Returns dataframe from backend
+
+    Args:
+        table (str): Table name
+        backend: (typing.Dict): backend connection settings
+        sess (SparkSession): Spark session
+    Returns:
+        DataFrame: returned dataframe
+    """
     df = sess.read.format('jdbc').options("driver", get_pyspark_driver(backend["dbtype"]))
 
     if backend["dbtype"] == "sqlite":
