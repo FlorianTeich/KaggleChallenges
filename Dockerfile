@@ -26,7 +26,7 @@ RUN /venv/bin/pip install src/
 
 # RUNTIME
 FROM base AS runtime
-RUN apt-get update && apt-get install -y default-jdk
+RUN apt-get update && apt-get install -y default-jdk procps
 RUN useradd --create-home appuser
 RUN mkdir -p /srv/KaggleChallenge
 #COPY run_pytest.sh /srv/KaggleChallenge
@@ -39,13 +39,11 @@ COPY . .
 RUN mkdir -p /srv/KaggleChallenge/src && \
     mkdir -p /srv/KaggleChallenge/mini_book && \
     mkdir -p /srv/KaggleChallenge/data && \
-    mkdir -p /srv/KaggleChallenge/extra_data && \
-    mkdir -p /srv/KaggleChallenge/plugins
+    mkdir -p /srv/KaggleChallenge/extra_data
 
 COPY src /srv/KaggleChallenge/src
 COPY mini_book /srv/KaggleChallenge/mini_book
 COPY data /srv/KaggleChallenge/data
-COPY plugins /srv/KaggleChallenge/plugins
 WORKDIR /srv/KaggleChallenge
 COPY entrypoint.sh entrypoint.sh
 CMD ["sh", "entrypoint.sh"]

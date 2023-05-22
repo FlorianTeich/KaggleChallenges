@@ -17,7 +17,8 @@ setuptools.setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    package_dir={"kcu": "kcu"},
     packages=["kcu"],
+    package_dir={"kcu": "kcu"},
+    package_data={'kcu': ['plugins/*.jar']},
     python_requires=">=3.6",
 )

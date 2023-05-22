@@ -33,7 +33,7 @@ def get_pyspark_session(backend_type=None):
         .builder \
         .appName("appname")
 
-    pluginpath = os.path.abspath(os.path.dirname(__file__)) + "/../../plugins"
+    pluginpath = os.path.abspath(os.path.dirname(__file__)) + "/plugins"
     if backend_type == "sqlite":
         sess = sess.config(
                         "spark.jars",
