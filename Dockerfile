@@ -26,7 +26,7 @@ RUN /venv/bin/pip install src/
 
 # RUNTIME
 FROM base AS runtime
-RUN apt-get update && apt-get install -y default-jdk procps
+RUN apt-get update && apt-get install -y default-jdk procps git
 RUN useradd --create-home appuser
 RUN mkdir -p /srv/KaggleChallenge
 RUN chown -R appuser:appuser /srv/KaggleChallenge

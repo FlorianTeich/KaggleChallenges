@@ -32,11 +32,30 @@ def get_default_backend_config() -> typing.Dict:
 
 
 def get_sql_url(backend: typing.Dict) -> str:
-    if backend["dbtype"] == "postgresql":
-        return "postgresql+psycopg2://" + backend["host"] + ":" + str(backend["port"]) + "/" + backend["db"]
+    """
+    Returns SQL URL for connecting to the backend
+    
+    Params:
+        backend (typing.Dict): Dictionary containing backend configuration
 
+    Returns:
+        str: Backend-Connection-URL
+    """
+    if backend["dbtype"] == "postgresql":
+        return "postgresql+psycopg2://" + backend["user"] + ":" + backend["password"] + "@" + backend["host"] + ":" + str(backend["port"]) + "/" + backend["db"]
+    elif backend["dbtype"] == "sqlite":
+        return "sqlite:///" + backend["file"]
+    
 
 def get_sql_engine(backend: typing.Dict):
+    """
+    Returns SQLAlchemy Engine to the provided backend
+    
+    Params:
+        backend (typing.Dict): Dictionary containing backend configuration
+
+    Returns:
+    """
     return create_engine(get_sql_url(backend))
 
 
@@ -94,7 +113,7 @@ def get_df_from_backend(table: str, backend: typing.Dict, sess: SparkSession) ->
     Returns:
         DataFrame: returned dataframe
     """
-    df = sess.read.format('jdbc').options("driver", get_pyspark_driver(backend["dbtype"]))
+    df = sess.read.format('jdbc').option("driver", get_pyspark_driver(backend["dbtype"]))
 
     if backend["dbtype"] == "sqlite":
         df = df.options(dbtable=table,

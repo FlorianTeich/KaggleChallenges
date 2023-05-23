@@ -7,6 +7,6 @@ RUN pip install jupyter ipykernel kafka-python requests streamlit scikit-learn p
 RUN pip uninstall watchdog -y
 
 WORKDIR /app
-COPY * /app/
+COPY ./ /app/
 
 ENTRYPOINT ["/bin/sh", "/app/entrypoint.sh"]
