@@ -1,5 +1,5 @@
 # BASE
-FROM python:3.9.13-slim as base
+FROM python:3.9.17-slim-bookworm as base
 ENV LANG C.UTF-8 \
     LC_ALL C.UTF-8 \
     PYTHONDONTWRITEBYTECODE 1 \

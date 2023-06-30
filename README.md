@@ -38,7 +38,6 @@ pip install -e .
 | minio | 9000:9000 & 9001:9001 | S3 Object Storage |
 | redis | 6380:6380 | Key-Value-Store |
 | mongo | 27017 & 27017 | NoSQL-Backend |
-| cloudbeaver | 8080:8978 | Browser-UI for Postgres Backend |
 | mlflow | 5000:5000 | MLOps Service for storing & serving models as well as tracking model performance metrics |
 | superset | 8060:8088 | Interactive visualizations & Dashboard creation tool |
 | zookeeper |  | Maintenance tool |

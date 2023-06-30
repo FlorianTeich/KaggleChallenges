@@ -87,12 +87,6 @@ services:
       POSTGRES_DB: ${SQL_DB}
     ports:
       - "5432:5432"
-  
-  cloudbeaver:
-    image: dbeaver/cloudbeaver:23.0.4
-    restart: always
-    ports:
-      - "8080:8978"
 
   minio:
     image: minio/minio:RELEASE.2023-05-18T00-05-36Z
