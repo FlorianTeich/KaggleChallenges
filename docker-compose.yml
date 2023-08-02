@@ -50,7 +50,7 @@ services:
       - "8889:8888"
       - "4040:4040"
     volumes:
-      - myapp:/srv/KaggleChallenge/extra_data
+      - ./notebooks:/srv/KaggleChallenge/extra_data
 
   neo4j:
     image: neo4j:5.6.0
@@ -169,18 +169,19 @@ services:
     image: apache/superset:2.1.0
     ports:
       - 8060:8088
+    environment:
+     - SUPERSET_SECRET_KEY=${SUPERSET_SECRET_KEY}
+     - SUPERSET_USERNAME=${SUPERSET_USERNAME}
+     - SUPERSET_EMAIL=${SUPERSET_EMAIL}
+     - SUPERSET_PASSWORD=${SUPERSET_PASSWORD}
+     - SUPERSET_FIRSTNAME=${SUPERSET_FIRSTNAME}
+     - SUPERSET_LASTNAME=${SUPERSET_LASTNAME}
     command: >
-      bash -c "superset fab create-admin &&
-               --username ${SUPERSET_USERNAME} \
-               --firstname ${SUPERSET_FIRSTNAME} \
-               --lastname ${SUPERSET_LASTNAME} \
-               --email ${SUPERSET_EMAIL} \
-               --password ${SUPERSET_PASSWORD} &&
-               superset db upgrade &&
+      bash -c "superset db upgrade &&
                superset load_examples &&
-               superset init"
+               superset init &&
+               tail -f /dev/null"
 
 
 volumes:
   minio_storage: {}
-  myapp:

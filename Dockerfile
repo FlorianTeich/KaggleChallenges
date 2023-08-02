@@ -18,11 +18,11 @@ RUN apt-get update && apt-get install -y gcc g++ gfortran libopenblas-dev liblap
 RUN pip install "poetry==$POETRY_VERSION"
 RUN python -m venv /venv
 COPY pyproject.toml poetry.lock README.md ./
-RUN poetry export -f requirements.txt | /venv/bin/pip install -r /dev/stdin
+RUN poetry export -f requirements.txt | /venv/bin/pip install --no-cache-dir -r /dev/stdin
 
 FROM python-deps as python-package-builder
-COPY src/ ./src/
-RUN /venv/bin/pip install src/
+COPY src/ /srv/KaggleChallenge/src/
+RUN /venv/bin/pip install -e /srv/KaggleChallenge/src/
 
 # RUNTIME
 FROM base AS runtime
